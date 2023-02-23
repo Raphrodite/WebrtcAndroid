@@ -702,6 +702,7 @@ public class PeerConnectionHelper {
             if (videoEnable) {
                 sdpDescription = preferCodec(sdpDescription, VIDEO_CODEC_H264, false);
             }
+            Log.e(TAG, "sdpDescription = " + sdpDescription);
             final SessionDescription sdp = new SessionDescription(sessionDescription.type, sdpDescription);
             pc.setLocalDescription(Peer.this, sdp);
         }
