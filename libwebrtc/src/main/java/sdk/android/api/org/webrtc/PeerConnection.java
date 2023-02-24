@@ -11,6 +11,8 @@
 package org.webrtc;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -531,7 +533,7 @@ public class PeerConnection {
     // of RTCConfiguration does that.
     public RTCConfiguration(List<IceServer> iceServers) {
       iceTransportsType = IceTransportsType.ALL;
-      bundlePolicy = BundlePolicy.BALANCED;
+      bundlePolicy = BundlePolicy.MAXBUNDLE;
       rtcpMuxPolicy = RtcpMuxPolicy.REQUIRE;
       tcpCandidatePolicy = TcpCandidatePolicy.ENABLED;
       candidateNetworkPolicy = CandidateNetworkPolicy.ALL;
@@ -563,7 +565,7 @@ public class PeerConnection {
       combinedAudioVideoBwe = null;
       enableDtlsSrtp = null;
       networkPreference = AdapterType.UNKNOWN;
-      sdpSemantics = SdpSemantics.PLAN_B;
+      sdpSemantics = SdpSemantics.UNIFIED_PLAN;
       activeResetSrtpParams = false;
       useMediaTransport = false;
       useMediaTransportForDataChannels = false;
@@ -995,15 +997,25 @@ public class PeerConnection {
     return addTrack(track, Collections.emptyList());
   }
 
+  public RtpSender addTrack(MediaStreamTrack track, MediaStream stream) {
+    List<String> ids = new ArrayList<>();
+    Log.e("zrzr", "ids = " + stream.getId());
+    ids.add(stream.getId());
+    return addTrack(track, ids);
+  }
+
   public RtpSender addTrack(MediaStreamTrack track, List<String> streamIds) {
     if (track == null || streamIds == null) {
+      Log.e("zrzr", "senders aa");
       throw new NullPointerException("No MediaStreamTrack specified in addTrack.");
     }
     RtpSender newSender = nativeAddTrack(track.getNativeMediaStreamTrack(), streamIds);
     if (newSender == null) {
+      Log.e("zrzr", "senders bb");
       throw new IllegalStateException("C++ addTrack failed.");
     }
     senders.add(newSender);
+    Log.e("zrzr", "senders size = " + senders.size());
     return newSender;
   }
 

@@ -99,6 +99,8 @@ public class PeerConnectionHelper {
     public VideoCapturer captureAndroid;
     public VideoSource videoSource;
     public AudioSource audioSource;
+    public VideoSource screenVideoSource;
+    public AudioSource screemAudioSource;
 
     /**
      * 初始化参数
@@ -337,10 +339,10 @@ public class PeerConnectionHelper {
      * 创建屏幕共享的流
      */
     private void createScreenStream() {
-        screenStream = factory.createLocalMediaStream("ARDAMS");
+        screenStream = factory.createLocalMediaStream("SCREENSTREAM");
         // 音频
-        audioSource = factory.createAudioSource(createAudioConstraints());
-        screenAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+        screemAudioSource = factory.createAudioSource(createAudioConstraints());
+        screenAudioTrack = factory.createAudioTrack("audioScreen", screemAudioSource);
         screenStream.addTrack(screenAudioTrack);
 
         if (videoEnable) {
@@ -355,14 +357,14 @@ public class PeerConnectionHelper {
                 });
             }
             // 视频
-            surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", rootEglBase.getEglBaseContext());
-            videoSource = factory.createVideoSource(captureAndroid.isScreencast());
+            SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThreadScreen", rootEglBase.getEglBaseContext());
+            screenVideoSource = factory.createVideoSource(captureAndroid.isScreencast());
             if (mediaType == MediaType.TYPE_MEETING) {
                 // videoSource.adaptOutputFormat(200, 200, 15);
             }
-            captureAndroid.initialize(surfaceTextureHelper, context, videoSource.getCapturerObserver());
+            captureAndroid.initialize(surfaceTextureHelper, context, screenVideoSource.getCapturerObserver());
             captureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
-            screenVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+            screenVideoTrack = factory.createVideoTrack("videoScreen", screenVideoSource);
             screenStream.addTrack(screenVideoTrack);
         }
         if (viewCallback != null) {
@@ -397,11 +399,14 @@ public class PeerConnectionHelper {
             }
             try {
                 //添加流
-                entry.getValue().pc.addStream(localStream);
+//                entry.getValue().pc.addStream(localStream);
+                entry.getValue().pc.addTrack(localAudioTrack, localStream);
+                entry.getValue().pc.addTrack(localVideoTrack, localStream);
                 if (IS_SCREEN == 1) {
                     if(screenStream != null) {
                         //屏幕共享
-                        entry.getValue().pc.addStream(screenStream);
+//                        entry.getValue().pc.addStream(screenStream);
+                        entry.getValue().pc.addTrack(screenVideoTrack, screenStream);
                     }
                 }
             } catch (Exception e) {
