@@ -367,9 +367,9 @@ public class PeerConnectionHelper {
             screenVideoTrack = factory.createVideoTrack("videoScreen", screenVideoSource);
             screenStream.addTrack(screenVideoTrack);
         }
-        if (viewCallback != null) {
-            viewCallback.onSetScreenStream(screenStream);
-        }
+//        if (viewCallback != null) {
+//            viewCallback.onSetScreenStream(screenStream);
+//        }
     }
 
     /**
