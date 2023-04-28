@@ -229,11 +229,15 @@ public class PeerConnectionHelper {
             if (localStream == null) {
                 //创建本地流 摄像头
                 createLocalStream();
+                Log.e("zrzr", "createLocalStream");
+                Log.e("zrzr", "createScreenStream");
+                if(screenStream == null) {
+                    Log.e("zrzr", "createScreenStream 1111");
+                    //屏幕共享
+                    createScreenStream();
+                }
                 if (IS_SCREEN == 1) {
-                    if(screenStream == null) {
-                        //屏幕共享
-                        createScreenStream();
-                    }
+
                 }
             }
 
@@ -390,11 +394,9 @@ public class PeerConnectionHelper {
         for (Map.Entry<String, Peer> entry : connectionPeerDic.entrySet()) {
             if (localStream == null) {
                 createLocalStream();
-                if (IS_SCREEN == 1) {
-                    if(screenStream == null) {
-                        //屏幕共享
-                        createScreenStream();
-                    }
+                if(screenStream == null) {
+                    //屏幕共享
+                    createScreenStream();
                 }
             }
             try {
@@ -402,12 +404,13 @@ public class PeerConnectionHelper {
 //                entry.getValue().pc.addStream(localStream);
                 entry.getValue().pc.addTrack(localAudioTrack, localStream);
                 entry.getValue().pc.addTrack(localVideoTrack, localStream);
-                if (IS_SCREEN == 1) {
-                    if(screenStream != null) {
-                        //屏幕共享
+                if(screenStream != null) {
+                    //屏幕共享
 //                        entry.getValue().pc.addStream(screenStream);
-                        entry.getValue().pc.addTrack(screenVideoTrack, screenStream);
-                    }
+                    entry.getValue().pc.addTrack(screenVideoTrack, screenStream);
+                }
+                if (IS_SCREEN == 1) {
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
