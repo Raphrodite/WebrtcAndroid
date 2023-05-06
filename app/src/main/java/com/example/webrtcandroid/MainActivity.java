@@ -1,7 +1,5 @@
 package com.example.webrtcandroid;
 
-import static com.example.webrtcandroid.webrtc.WebRtcManager.IS_SCREEN;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,16 +10,11 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.example.chatwebrtc.utils.webrtc.WebRtcUtil;
 import com.example.webrtcandroid.databinding.ActivityMainBinding;
-import com.example.webrtcandroid.view.CallNewWindow;
-import com.example.webrtcandroid.webrtc.WebRtcUtil;
-import com.example.webrtcandroid.websocket.WebSocketManager;
 
 import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.VideoCapturer;
@@ -44,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         binding.tvVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WebRtcUtil.callVideo(MainActivity.this, "", true, false);
+//                WebRtcUtil.callVideo(MainActivity.this, "", true, false);
             }
         });
 
@@ -52,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
         binding.tvScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                WebRtcUtil.callNewWindow(MainActivity.this, "", true, false);
-//                CallNewWindow.getInstance(MainActivity.this).showTopRight(null);
-                Log.e("zrzr", "aaaaa");
+                //进行通话 首先要判断是否拥有屏幕共享权限
                 if (!PermissionUtil.isNeedRequestPermission(MainActivity.this)) {
                     //屏幕共享权限
                     permissionCheckForProjection();
@@ -76,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "截屏服务不可用", Toast.LENGTH_SHORT).show();
             return;
         }
+
         Intent intent = manager.createScreenCaptureIntent();
         startActivityForResult(intent, PROJECTION_REQUEST_CODE);
     }
@@ -89,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        Log.e("zrzr", "onRequestPermissionsResult");
+        //权限回调 发起屏幕共享请求
         permissionCheckForProjection();
     }
 
@@ -97,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PROJECTION_REQUEST_CODE && resultCode == RESULT_OK) {
-            //屏幕共享回调 获取data 创建VideoCapture
+            //屏幕共享回调 获取data
             Intent captureIntent = data;
+            //创建VideoCapture
             createVideoCapture(captureIntent);
         }
     }
@@ -108,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createVideoCapture(Intent captureIntent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Log.e("zrzr", "createVideoCapture");
             VideoCapturer videoCapturer = new ScreenCapturerAndroid(captureIntent,
                     new MediaProjection.Callback() {
                         @Override
@@ -117,12 +109,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-            IS_SCREEN = 1;
-
             //用得到的captureIntent 创建屏幕共享视频流 开启通话
-//            CallNewWindow.getInstance(this).getVideoCapture(captureIntent);
-
-            WebRtcUtil.callNewWindow(MainActivity.this, "", true, false, captureIntent);
+            WebRtcUtil.callNewWindow(MainActivity.this, "", true, captureIntent);
         }
     }
 }

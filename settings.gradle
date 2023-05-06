@@ -1,3 +1,4 @@
 rootProject.name = "WebrtcAndroid"
 include ':app'
 include ':libwebrtc'
+include ':chatwebrtc'

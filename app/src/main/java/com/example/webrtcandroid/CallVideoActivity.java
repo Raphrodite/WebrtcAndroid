@@ -1,7 +1,5 @@
 package com.example.webrtcandroid;
 
-import static com.example.webrtcandroid.webrtc.WebRtcManager.IS_SCREEN;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -24,8 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.webrtcandroid.webrtc.ProxyVideoSink;
-import com.example.webrtcandroid.webrtc.WebRtcManager;
+import com.example.chatwebrtc.IViewCallback;
+import com.example.chatwebrtc.utils.webrtc.ProxyVideoSink;
+import com.example.chatwebrtc.utils.webrtc.WebRtcManager;
 
 import org.webrtc.EglBase;
 import org.webrtc.MediaStream;
@@ -262,13 +261,9 @@ public class CallVideoActivity extends AppCompatActivity {
                 });
             }
         });
-        if (!PermissionUtil.isNeedRequestPermission(CallVideoActivity.this)) {
-            if(IS_SCREEN == 0) {
-                manager.sendPreCall(getApplicationContext(), rootEglBase);
-            }else{
-                permissionCheckForProjection();
-            }
-        }
+
+//        manager.sendPreCall(getApplicationContext(), rootEglBase);
+        permissionCheckForProjection();
     }
 
     private void replaceFragment(Fragment fragment, boolean videoEnable) {
@@ -357,11 +352,9 @@ public class CallVideoActivity extends AppCompatActivity {
                 break;
             }
         }
-        if(IS_SCREEN == 0) {
-            manager.sendPreCall(getApplicationContext(), rootEglBase);
-        }else{
-            permissionCheckForProjection();
-        }
+
+//        manager.sendPreCall(getApplicationContext(), rootEglBase);
+        permissionCheckForProjection();
     }
 
     /**

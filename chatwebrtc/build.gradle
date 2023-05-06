@@ -1,21 +1,13 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+
     defaultConfig {
-        applicationId "com.example.webrtcandroid"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
-        versionCode 19
-        vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [moduleName: project.getName()]
-                includeCompileClasspath = true
-            }
-        }
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
@@ -24,20 +16,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    viewBinding{
-        enabled = true
-    }
+    buildToolsVersion '28.0.3'
 }
 
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -45,8 +35,5 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.64.android'
     implementation 'com.squareup.okhttp3:okhttp:3.5.0'
 
-//    implementation 'org.webrtc:google-webrtc:1.0.+'
-
     implementation project(path: ':libwebrtc')
-    implementation project(path: ':chatwebrtc')
 }
