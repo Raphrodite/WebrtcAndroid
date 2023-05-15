@@ -1,4 +1,4 @@
-package com.example.chatwebrtc.utils.webrtc;
+package com.example.chatwebrtc.webrtc;
 
 import android.content.Context;
 import android.content.Intent;

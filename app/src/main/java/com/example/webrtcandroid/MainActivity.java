@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.chatwebrtc.utils.webrtc.WebRtcUtil;
+import com.example.chatwebrtc.webrtc.WebRtcUtil;
 import com.example.webrtcandroid.databinding.ActivityMainBinding;
 
 import org.webrtc.ScreenCapturerAndroid;

@@ -1,4 +1,4 @@
-package com.example.chatwebrtc.utils.webrtc;
+package com.example.chatwebrtc.webrtc;
 
 /**
  * * Copyright * 圣通电力

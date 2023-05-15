@@ -8,8 +8,8 @@ import android.view.View;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
-import com.example.chatwebrtc.utils.webrtc.ProxyVideoSink;
-import com.example.chatwebrtc.utils.webrtc.WebRtcManager;
+import com.example.chatwebrtc.webrtc.ProxyVideoSink;
+import com.example.chatwebrtc.webrtc.WebRtcManager;
 
 import org.webrtc.EglBase;
 import org.webrtc.MediaStream;

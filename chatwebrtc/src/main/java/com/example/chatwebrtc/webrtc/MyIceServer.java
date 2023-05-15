@@ -1,4 +1,4 @@
-package com.example.chatwebrtc.utils.webrtc;
+package com.example.chatwebrtc.webrtc;
 
 import android.os.Parcel;
 import android.os.Parcelable;

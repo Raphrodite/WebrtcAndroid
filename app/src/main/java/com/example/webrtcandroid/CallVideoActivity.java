@@ -23,8 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.chatwebrtc.IViewCallback;
-import com.example.chatwebrtc.utils.webrtc.ProxyVideoSink;
-import com.example.chatwebrtc.utils.webrtc.WebRtcManager;
+import com.example.chatwebrtc.webrtc.ProxyVideoSink;
+import com.example.chatwebrtc.webrtc.WebRtcManager;
 
 import org.webrtc.EglBase;
 import org.webrtc.MediaStream;

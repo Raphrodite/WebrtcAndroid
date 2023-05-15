@@ -12,7 +12,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.example.chatwebrtc.utils.webrtc.IWebRtcEvents;
+import com.example.chatwebrtc.webrtc.IWebRtcEvents;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -185,7 +185,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     @Override
     public void connect(String url) {
         Log.e(TAG, "connect");
-//        close();
+        close();
         //连接地址
         webSocketUrl = url;
         new InitSocketThread().start();

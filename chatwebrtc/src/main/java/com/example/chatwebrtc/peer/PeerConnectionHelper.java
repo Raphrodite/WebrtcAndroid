@@ -9,8 +9,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.chatwebrtc.IViewCallback;
-import com.example.chatwebrtc.utils.webrtc.MediaType;
-import com.example.chatwebrtc.utils.webrtc.MyIceServer;
+import com.example.chatwebrtc.webrtc.MediaType;
+import com.example.chatwebrtc.webrtc.MyIceServer;
 import com.example.chatwebrtc.websocket.IWebSocket;
 
 import org.webrtc.AudioSource;
