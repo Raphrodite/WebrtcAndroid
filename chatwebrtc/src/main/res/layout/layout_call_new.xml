@@ -24,6 +24,20 @@
             android:layout_height="match_parent"
             />
 
+        <!--挂断-->
+        <TextView
+            android:id="@+id/wr_switch_hang_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:drawablePadding="5dp"
+            android:drawableTop="@drawable/webrtc_cancel"
+            android:gravity="center_horizontal"
+            android:text="@string/webrtc_chat_hang_up"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/wr_control_text_size" />
+
     </RelativeLayout>
 
 </RelativeLayout>

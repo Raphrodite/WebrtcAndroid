@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
@@ -50,6 +51,8 @@ public class CallNewWindow extends BaseFloatingWindow {
 
     private static Activity mActivity;
 
+    private TextView tvHangUp;
+
     public static CallNewWindow getInstance(Context context) {
         if (instance == null) {
             mActivity = (Activity) context;
@@ -71,6 +74,14 @@ public class CallNewWindow extends BaseFloatingWindow {
     protected void initView(View mRootView) {
         local_view = mRootView.findViewById(R.id.local_view_render);
         remote_view = mRootView.findViewById(R.id.remote_view_render);
+        tvHangUp = mRootView.findViewById(R.id.wr_switch_hang_up);
+
+        tvHangUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("zrzr", "111");
+            }
+        });
 
         rootEglBase = EglBase.create();
 
