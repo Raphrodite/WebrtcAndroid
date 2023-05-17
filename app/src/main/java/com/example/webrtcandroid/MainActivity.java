@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 callConfirmDialog.setOnConfirmListener(new CallConfirmDialog.OnConfirmListener() {
                     @Override
                     public void onConfirm() {
+                        //弹窗消失
                         callConfirmDialog.dismiss();
                         //进行通话 首先要判断是否拥有屏幕共享权限
                         if (!PermissionUtil.isNeedRequestPermission(MainActivity.this)) {
