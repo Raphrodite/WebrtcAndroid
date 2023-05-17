@@ -15,28 +15,13 @@
         >
 
         <TextView
-            android:id="@+id/tv_video"
+            android:id="@+id/tv_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频通话"
+            android:text="呼叫客服"
             android:textSize="30sp"
-            />
-
-        <TextView
-            android:id="@+id/tv_screen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="屏幕共享"
-            android:textSize="30sp"
-            android:layout_marginTop="40dp"
             />
 
     </LinearLayout>
-
-    <!--<WebView
-        android:id="@+id/wv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />-->
 
 </RelativeLayout>

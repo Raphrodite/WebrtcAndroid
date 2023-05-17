@@ -24,9 +24,27 @@
             android:layout_height="match_parent"
             />
 
+        <RelativeLayout
+            android:id="@+id/rl_call_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00ff00"
+            >
+
+            <TextView
+                android:id="@+id/tv_call_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="呼叫中..."
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </RelativeLayout>
+
         <!--挂断-->
         <TextView
-            android:id="@+id/wr_switch_hang_up"
+            android:id="@+id/tv_hang_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

@@ -5,17 +5,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
+import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.webrtc.ProxyVideoSink;
 import com.example.chatwebrtc.webrtc.WebRtcManager;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.webrtc.EglBase;
 import org.webrtc.MediaStream;
 import org.webrtc.RendererCommon;
 import org.webrtc.SurfaceViewRenderer;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * * Copyright * 圣通电力
@@ -51,7 +60,20 @@ public class CallNewWindow extends BaseFloatingWindow {
 
     private static Activity mActivity;
 
+    /**
+     * 挂断按钮
+     */
     private TextView tvHangUp;
+
+    /**
+     * 呼叫状态 区域
+     */
+    private RelativeLayout rlCallStatus;
+
+    /**
+     * 呼叫状态
+     */
+    private TextView tvCallStatus;
 
     public static CallNewWindow getInstance(Context context) {
         if (instance == null) {
@@ -74,12 +96,16 @@ public class CallNewWindow extends BaseFloatingWindow {
     protected void initView(View mRootView) {
         local_view = mRootView.findViewById(R.id.local_view_render);
         remote_view = mRootView.findViewById(R.id.remote_view_render);
-        tvHangUp = mRootView.findViewById(R.id.wr_switch_hang_up);
+        tvHangUp = mRootView.findViewById(R.id.tv_hang_up);
+        rlCallStatus = mRootView.findViewById(R.id.rl_call_status);
+        tvCallStatus = mRootView.findViewById(R.id.tv_call_status);
 
+        //挂断 监听
         tvHangUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("zrzr", "111");
+                //断开连接
+                disconnect();
             }
         });
 
@@ -165,6 +191,89 @@ public class CallNewWindow extends BaseFloatingWindow {
         super.showTopRight(onShowListener);
         Log.e("zrzr", "showTopRight");
         manager.sendPreCall(mContext, rootEglBase, captureIntent);
+    }
+
+    /**
+     * 展示呼叫状态界面
+     * @param status callStatusIng-呼叫中， callStatusQueue-排队中
+     */
+    public void showCallStatus(String status) {
+        rlCallStatus.setVisibility(View.VISIBLE);
+        switch (status) {
+            case CallConfigs.CALL_STATUS_ING:
+                //呼叫中
+                tvCallStatus.setText("当前正在呼叫中...");
+                break;
+            case CallConfigs.CALL_STATUS_QUEUE:
+                //排队中
+                tvCallStatus.setText("当前正在排队中...");
+                break;
+            case CallConfigs.CALL_STATUS_SOON:
+                //即将接通 倒计时提示文字
+                long count = 5L;
+                Flowable.interval(0, 1, TimeUnit.SECONDS)
+                        .onBackpressureBuffer()
+                        .take(count)
+                        .map(aLong -> count - aLong)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<Long>() {
+                            @Override
+                            public void onSubscribe(Subscription s) {
+                                //设置请求次数
+                                s.request(Long.MAX_VALUE);
+                            }
+
+                            @Override
+                            public void onNext(Long aLong) {
+                                Log.e(TAG, "aLong = " + aLong);
+                                tvCallStatus.setText("即将接通..." + (aLong - 1) + "s");
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.e(TAG, "onComplete");
+                                rlCallStatus.setVisibility(View.GONE);
+                            }
+                        });
+
+                break;
+            case CallConfigs.CALL_STATUS_HANG_UP:
+                //挂断
+                disconnect();
+                break;
+        }
+    }
+
+    /**
+     * 断开连接
+     */
+    private void disconnect() {
+        manager.exitCall();
+        if (localRender != null) {
+            localRender.setTarget(null);
+            localRender = null;
+        }
+        if (remoteRender != null) {
+            remoteRender.setTarget(null);
+            remoteRender = null;
+        }
+
+        if (local_view != null) {
+            local_view.release();
+            local_view = null;
+        }
+        if (remote_view != null) {
+            remote_view.release();
+            remote_view = null;
+        }
+
+        hide(null);
+        instance = null;
     }
 
 }

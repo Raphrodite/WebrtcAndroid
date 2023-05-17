@@ -238,8 +238,9 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
             //这个是回调数据
             JSONObject jsonObject = JSON.parseObject(message);
 
-            //发起预通话配置回调
-            if (jsonObject.getInteger("connectStatus") != null) {
+            //发起预通话配置-分配成功
+            if (jsonObject.getString("type") != null
+                    && "START_ACK".equals(jsonObject.getString("type"))) {
                 //连接状态 connectStatus 0-分配成功 1-需要排队
                 int connectStatus = jsonObject.getIntValue("connectStatus");
                 String offerId = jsonObject.getString("offerId");
@@ -247,23 +248,35 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
                     //预通话配置 分配成功 发起正式通话
                     String answerId = jsonObject.getString("answerId");
                     sendCall(answerId, offerId);
-                } else {
-                    //排队中
-                    events.onQueue();
                 }
             }
 
+            //发起预通话配置-排队中
+            if (jsonObject.getString("type") != null
+                    && "QUEUE".equals(jsonObject.getString("type"))) {
+                //排队中
+                events.onQueue();
+            }
+
             //发起正式通话回调
-            if (jsonObject.getString("callStatus") != null) {
+            if (jsonObject.getString("type") != null
+                    && "CALL_ACK".equals(jsonObject.getString("type"))) {
                 String callStatus = jsonObject.getString("callStatus");
                 String offerId = jsonObject.getString("offerId");
-                //接通
+                //web点击接听
                 if("ANSWER".equals(callStatus)) {
                     String answerId = jsonObject.getString("answerId");
                     ArrayList<String> connections = new ArrayList<>();
                     connections.add(answerId);
                     //发起正式通话
                     events.onSendCall(connections);
+                    //即将接通
+                    events.onCall();
+                }
+                //web点击挂断
+                if("HANGUP".equals(callStatus)) {
+                    //挂断
+                    events.onHangUp();
                 }
             }
 

@@ -224,13 +224,11 @@ public class PeerConnectionHelper {
             if (factory == null) {
                 factory = createConnectionFactory();
             }
+            Log.e(TAG, "发起正式通话 ---- 创建视频流");
             if (localStream == null) {
                 //创建本地流 摄像头
                 createLocalStream();
-                Log.e("zrzr", "createLocalStream");
-                Log.e("zrzr", "createScreenStream");
                 if(screenStream == null) {
-                    Log.e("zrzr", "createScreenStream 1111");
                     //屏幕共享
                     createScreenStream();
                 }

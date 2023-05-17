@@ -51,4 +51,14 @@ public interface IWebRtcEvents {
      * @param iceCandidate
      */
     void onRemoteIceCandidate(String id, IceCandidate iceCandidate);
+
+    /**
+     * web点击挂断
+     */
+    void onHangUp();
+
+    /**
+     * web点击接听
+     */
+    void onCall();
 }

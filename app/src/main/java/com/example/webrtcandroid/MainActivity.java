@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.chatwebrtc.dialog.CallConfirmDialog;
 import com.example.chatwebrtc.webrtc.WebRtcUtil;
 import com.example.webrtcandroid.databinding.ActivityMainBinding;
 
@@ -33,23 +34,24 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        //视频通话
-        binding.tvVideo.setOnClickListener(new View.OnClickListener() {
+        //呼叫客服
+        binding.tvCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                WebRtcUtil.callVideo(MainActivity.this, "", true, false);
-            }
-        });
-
-        //屏幕共享
-        binding.tvScreen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //进行通话 首先要判断是否拥有屏幕共享权限
-                if (!PermissionUtil.isNeedRequestPermission(MainActivity.this)) {
-                    //屏幕共享权限
-                    permissionCheckForProjection();
-                }
+                //出现弹窗提示
+                CallConfirmDialog callConfirmDialog = new CallConfirmDialog(MainActivity.this);
+                callConfirmDialog.showDialog(callConfirmDialog);
+                callConfirmDialog.setOnConfirmListener(new CallConfirmDialog.OnConfirmListener() {
+                    @Override
+                    public void onConfirm() {
+                        callConfirmDialog.dismiss();
+                        //进行通话 首先要判断是否拥有屏幕共享权限
+                        if (!PermissionUtil.isNeedRequestPermission(MainActivity.this)) {
+                            //屏幕共享权限
+                            permissionCheckForProjection();
+                        }
+                    }
+                });
             }
         });
     }

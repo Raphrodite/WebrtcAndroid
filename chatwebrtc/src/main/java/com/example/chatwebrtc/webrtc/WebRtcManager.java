@@ -262,5 +262,25 @@ public class WebRtcManager implements IWebRtcEvents {
         });
     }
 
+    @Override
+    public void onHangUp() {
+        //挂断
+        handler.post(() -> {
+            if (connectEvent != null) {
+                connectEvent.onHangUp();
+            }
+        });
+    }
+
+    @Override
+    public void onCall() {
+        //即将接通
+        handler.post(() -> {
+            if (connectEvent != null) {
+                connectEvent.onCall();
+            }
+        });
+    }
+
     // ==================================信令回调 end===============================================
 }
