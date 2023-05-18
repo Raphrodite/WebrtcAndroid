@@ -3,8 +3,10 @@ package com.example.chatwebrtc.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,21 +45,36 @@ public class CallNewWindow extends BaseFloatingWindow {
      */
     public final static String TAG = "CallNewWindow_zrzr";
 
+    /**
+     * 呼叫弹窗 单例
+     */
     private static CallNewWindow instance;
 
-    private SurfaceViewRenderer local_view;
-    private SurfaceViewRenderer remote_view;
+    /**
+     * 控件，继承于SurfaceView的渲染View，提供了OpenGL渲染图像数据的功能，加载本地和远端
+     */
+    private SurfaceViewRenderer local_view, remote_view;
 
-    private ProxyVideoSink localRender;
-    private ProxyVideoSink remoteRender;
+    /**
+     * ProxyVideoSink 本地、远端
+     */
+    private ProxyVideoSink localRender, remoteRender;
 
+    /**
+     * 提供EGL的渲染上下文及EGL的版本兼容
+     */
     private EglBase rootEglBase;
 
-    private boolean isSwappedFeeds;
     private boolean videoEnable = true;
 
+    /**
+     * WebRtc工具类
+     */
     private WebRtcManager manager;
 
+    /**
+     * Activity对象
+     */
     private static Activity mActivity;
 
     /**
@@ -71,9 +88,19 @@ public class CallNewWindow extends BaseFloatingWindow {
     private RelativeLayout rlCallStatus;
 
     /**
-     * 呼叫状态
+     * 呼叫状态 文字
      */
     private TextView tvCallStatus;
+
+    /**
+     * 客服信息
+     */
+    private TextView tvInfo;
+
+    /**
+     * 计时器
+     */
+    private Chronometer timer;
 
     public static CallNewWindow getInstance(Context context) {
         if (instance == null) {
@@ -99,15 +126,8 @@ public class CallNewWindow extends BaseFloatingWindow {
         tvHangUp = mRootView.findViewById(R.id.tv_hang_up);
         rlCallStatus = mRootView.findViewById(R.id.rl_call_status);
         tvCallStatus = mRootView.findViewById(R.id.tv_call_status);
-
-        //挂断 监听
-        tvHangUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //断开连接
-                disconnect();
-            }
-        });
+        tvInfo = mRootView.findViewById(R.id.tv_info);
+        timer = mRootView.findViewById(R.id.timer);
 
         rootEglBase = EglBase.create();
 
@@ -123,7 +143,7 @@ public class CallNewWindow extends BaseFloatingWindow {
         remote_view.setMirror(true);
         remoteRender = new ProxyVideoSink();
 
-        setSwappedFeeds(false);
+//        setSwappedFeeds(false);
 
         startCall();
     }
@@ -134,13 +154,13 @@ public class CallNewWindow extends BaseFloatingWindow {
             @Override
             public void onSetLocalStream(MediaStream stream) {
                 Log.e(TAG, "onSetLocalStream");
-                if (stream.videoTracks.size() > 0) {
-                    stream.videoTracks.get(0).addSink(localRender);
-                }
-
-                if (videoEnable) {
-                    stream.videoTracks.get(0).setEnabled(true);
-                }
+//                if (stream.videoTracks.size() > 0) {
+//                    stream.videoTracks.get(0).addSink(localRender);
+//                }
+//
+//                if (videoEnable) {
+//                    stream.videoTracks.get(0).setEnabled(true);
+//                }
             }
 
             @Override
@@ -164,21 +184,28 @@ public class CallNewWindow extends BaseFloatingWindow {
 
             @Override
             public void onClose() {
-
+                //通话通道关闭
+                disconnect();
             }
         });
 
     }
 
     private void setSwappedFeeds(boolean isSwappedFeeds) {
-        this.isSwappedFeeds = isSwappedFeeds;
         localRender.setTarget(isSwappedFeeds ? remote_view : local_view);
         remoteRender.setTarget(isSwappedFeeds ? local_view : remote_view);
     }
 
     @Override
     protected void onBindListener() {
-
+        //挂断 监听
+        tvHangUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //断开连接
+                disconnect();
+            }
+        });
     }
 
     @Override
@@ -199,6 +226,8 @@ public class CallNewWindow extends BaseFloatingWindow {
      */
     public void showCallStatus(String status) {
         rlCallStatus.setVisibility(View.VISIBLE);
+        tvInfo.setVisibility(View.GONE);
+        timer.setVisibility(View.GONE);
         switch (status) {
             case CallConfigs.CALL_STATUS_ING:
                 //呼叫中
@@ -225,6 +254,7 @@ public class CallNewWindow extends BaseFloatingWindow {
 
                             @Override
                             public void onNext(Long aLong) {
+                                //倒计时过程中
                                 Log.e(TAG, "aLong = " + aLong);
                                 tvCallStatus.setText("即将接通..." + (aLong - 1) + "s");
                             }
@@ -236,8 +266,14 @@ public class CallNewWindow extends BaseFloatingWindow {
 
                             @Override
                             public void onComplete() {
+                                //倒计时结束 隐藏呼叫状态界面 显示客服信息+通话时间
                                 Log.e(TAG, "onComplete");
                                 rlCallStatus.setVisibility(View.GONE);
+                                tvInfo.setVisibility(View.VISIBLE);
+                                timer.setVisibility(View.VISIBLE);
+                                //计时器清零+开始
+                                timer.setBase(SystemClock.elapsedRealtime());
+                                timer.start();
                             }
                         });
 
@@ -271,6 +307,9 @@ public class CallNewWindow extends BaseFloatingWindow {
             remote_view.release();
             remote_view = null;
         }
+
+        //计时器结束
+        timer.stop();
 
         hide(null);
         instance = null;

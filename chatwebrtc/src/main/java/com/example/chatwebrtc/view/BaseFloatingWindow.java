@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -502,7 +504,12 @@ public abstract class BaseFloatingWindow {
                 }
             }
         });
-        valueAnimator.setDuration(animalTime).start();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                valueAnimator.setDuration(animalTime).start();
+            }
+        });
     }
 
     public boolean isSetAnimal() {

@@ -56,6 +56,22 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/wr_control_text_size" />
 
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="客服姓名XXXX 工号XXXXX"
+            android:textColor="@color/white"
+            />
+        
+        <Chronometer
+            android:layout_below="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:format="%s"
+            android:id="@+id/timer"
+            />
+
     </RelativeLayout>
 
 </RelativeLayout>
