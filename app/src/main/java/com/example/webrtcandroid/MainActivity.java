@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.chatwebrtc.dialog.CallConfirmDialog;
+import com.example.chatwebrtc.view.RobotWindow;
 import com.example.chatwebrtc.webrtc.WebRtcUtil;
 import com.example.webrtcandroid.databinding.ActivityMainBinding;
 
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+//                RobotWindow.getInstance(MainActivity.this).show(0, 0, null);
             }
         });
     }
