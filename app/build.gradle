@@ -43,10 +43,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.alibaba:fastjson:1.1.64.android'
-    implementation 'com.squareup.okhttp3:okhttp:3.5.0'
+    //OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 //    implementation 'org.webrtc:google-webrtc:1.0.+'
 
     implementation project(path: ':libwebrtc')
     implementation project(path: ':chatwebrtc')
+
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }

@@ -13,9 +13,19 @@ package com.example.chatwebrtc.utils;
 public class CallConfigs {
 
     /**
-     * websocket连接成功之后，状态-呼叫中
+     * websocket连接成功之后，状态-发起匹配客服请求
      */
     public static final String CALL_STATUS_ING = "callStatusIng";
+
+    /**
+     * 匹配客服应答-未匹配到客服需等待
+     */
+    public static final String CALL_STATUS_WAIT = "callStatusWait";
+
+    /**
+     * 匹配客服应答-匹配到客服
+     */
+    public static final String CALL_STATUS_MATCH = "callStatusMatch";
 
     /**
      * websocket连接成功之后，状态-排队中

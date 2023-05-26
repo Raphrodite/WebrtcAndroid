@@ -46,6 +46,7 @@ public class RobotWindow extends BaseFloatingWindow {
             @Override
             public void onClick(View view) {
                 ConfirmCallWindow.getInstance(mContext).showMatch(null);
+                hide(null);
             }
         });
     }

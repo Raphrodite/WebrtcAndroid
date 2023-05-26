@@ -2,6 +2,8 @@ package com.example.chatwebrtc.websocket;
 
 import org.webrtc.IceCandidate;
 
+import java.util.List;
+
 /**
  * * Copyright * 圣通电力
  *
@@ -31,22 +33,23 @@ public interface IWebSocket {
     void close();
 
     /**
-     * 发起预通话配置(分配对应客服)
+     * 匹配客服
+     * @param againQueue 重新排队时传1 （客服长时间未接听、客服拒接）
      */
-    void sendPre();
+    void sendQueue(String againQueue);
 
     /**
      * 发起通话
-     * @param offerId  安卓客户端ID
-     * @param answerId  分配的客服ID（浏览器端登录用户ID，仅当connectStatus为0时有值）
+     * @param serverId 配对到的客服id
      */
-    void sendCall(String offerId, String answerId);
+    void sendCall(String serverId);
 
     /**
      * 发送offer信息
      * @param sdp
+     * @param mids
      */
-    void sendOffer(String sdp);
+    void sendOffer(String sdp, List<String> mids);
 
     /**
      * 发送Ice信息

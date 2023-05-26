@@ -153,6 +153,7 @@ public class CallNewWindow extends BaseFloatingWindow {
         manager.setCallback(new IViewCallback() {
             @Override
             public void onSetLocalStream(MediaStream stream) {
+                //设置本地
                 Log.e(TAG, "onSetLocalStream");
 //                if (stream.videoTracks.size() > 0) {
 //                    stream.videoTracks.get(0).addSink(localRender);
@@ -170,6 +171,7 @@ public class CallNewWindow extends BaseFloatingWindow {
 
             @Override
             public void onAddRemoteStream(MediaStream stream) {
+                //设置远程
                 Log.e(TAG, "onAddRemoteStream");
                 Log.e(TAG, "stream size = " + stream.videoTracks.size());
                 if (stream.videoTracks.size() > 0) {
@@ -216,8 +218,8 @@ public class CallNewWindow extends BaseFloatingWindow {
     @Override
     public void showTopRight(OnShowListener onShowListener, Intent captureIntent) {
         super.showTopRight(onShowListener);
-        Log.e("zrzr", "showTopRight");
-        manager.sendPreCall(mContext, rootEglBase, captureIntent);
+        Log.e("zrzr", "showTopRight---");
+        manager.sendQueue(mContext, rootEglBase, captureIntent);
     }
 
     /**
@@ -231,7 +233,15 @@ public class CallNewWindow extends BaseFloatingWindow {
         switch (status) {
             case CallConfigs.CALL_STATUS_ING:
                 //呼叫中
-                tvCallStatus.setText("当前正在呼叫中...");
+                tvCallStatus.setText("匹配客服中...");
+                break;
+            case CallConfigs.CALL_STATUS_WAIT:
+                //匹配客服应答-未匹配到客服需等待
+                tvCallStatus.setText("等待匹配客服中...");
+                break;
+            case CallConfigs.CALL_STATUS_MATCH:
+                //匹配客服应答-已匹配到客服
+                tvCallStatus.setText("已匹配到客服...正在发起通话");
                 break;
             case CallConfigs.CALL_STATUS_QUEUE:
                 //排队中
@@ -311,7 +321,12 @@ public class CallNewWindow extends BaseFloatingWindow {
         //计时器结束
         timer.stop();
 
-        hide(null);
+        hide(new OnHideListener() {
+            @Override
+            public void onHideFinish(int marginRight, int marginBottom) {
+                RobotWindow.getInstance(mContext).show(0, 0, null);
+            }
+        });
         instance = null;
     }
 

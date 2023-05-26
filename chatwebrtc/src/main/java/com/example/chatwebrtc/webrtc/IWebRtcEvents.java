@@ -28,12 +28,22 @@ public interface IWebRtcEvents {
     void onWebSocketFailed(String msg);
 
     /**
+     * 匹配客服应答-未匹配到客服需等待
+     */
+    void onWait();
+
+    /**
+     * 匹配客服应答-已匹配到客服
+     */
+    void onMatch();
+
+    /**
      * 预通话配置-返回排队中
      */
     void onQueue();
 
     /**
-     * 发起正式通话
+     * 发起通话
      * @param connections
      */
     void onSendCall(ArrayList<String> connections);

@@ -26,6 +26,7 @@ import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
+import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
@@ -647,7 +648,7 @@ public class PeerConnectionHelper {
 
         @Override
         public void onIceCandidate(IceCandidate iceCandidate) {
-            Log.e(TAG, "onIceCandidate: " + iceCandidate.toString());
+//            Log.e(TAG, "onIceCandidate: " + iceCandidate.toString());
             // 发送IceCandidate
             webSocket.sendIceCandidate(iceCandidate);
         }
@@ -706,7 +707,7 @@ public class PeerConnectionHelper {
             if (videoEnable) {
                 sdpDescription = preferCodec(sdpDescription, VIDEO_CODEC_H264, false);
             }
-            Log.e(TAG, "sdpDescription = " + sdpDescription);
+//            Log.e(TAG, "sdpDescription = " + sdpDescription);
             final SessionDescription sdp = new SessionDescription(sessionDescription.type, sdpDescription);
             pc.setLocalDescription(Peer.this, sdp);
         }
@@ -723,8 +724,19 @@ public class PeerConnectionHelper {
                     //接收者，发送Answer
 
                 } else if (role == Role.Caller) {
+                    List<String> mids = new ArrayList<>();
+
+                    //遍历 PeerConnection 中的所有 RtpTransceiver，找到视频轨道对应的 RtpTransceiver
+                    for (RtpTransceiver transceiver : pc.getTransceivers()) {
+                        if (transceiver.getMediaType() == MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO) {
+                            String mid = transceiver.getMid();
+                            Log.e(TAG, "mid = " + mid);
+                            mids.add(mid);
+                        }
+                    }
+
                     //发送者,发送自己的offer
-                    webSocket.sendOffer(pc.getLocalDescription().description);
+                    webSocket.sendOffer(pc.getLocalDescription().description, mids);
                 }
 
             } else if (pc.signalingState() == PeerConnection.SignalingState.STABLE) {

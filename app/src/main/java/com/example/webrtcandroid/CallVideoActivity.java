@@ -404,7 +404,7 @@ public class CallVideoActivity extends AppCompatActivity {
 //            videoCapturer.startCapture(480, 640, 30);
 
 
-            manager.sendPreCall(getApplicationContext(), rootEglBase, captureIntent);
+            manager.sendQueue(getApplicationContext(), rootEglBase, captureIntent);
         }
     }
 

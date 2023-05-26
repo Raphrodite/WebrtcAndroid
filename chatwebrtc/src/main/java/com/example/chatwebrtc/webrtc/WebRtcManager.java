@@ -126,31 +126,17 @@ public class WebRtcManager implements IWebRtcEvents {
     //===================================控制功能 activity start==============================================
 
     /**
-     * 发起预通话配置
-     * @param context
-     * @param eglBase
-     */
-    public void sendPreCall(Context context, EglBase eglBase) {
-        if (peerHelper != null) {
-            peerHelper.initContext(context, eglBase);
-        }
-        if (webSocket != null) {
-            webSocket.sendPre();
-        }
-    }
-
-    /**
-     * 发起预通话配置
+     * 匹配客服
      * @param context
      * @param eglBase
      * @param captureIntent
      */
-    public void sendPreCall(Context context, EglBase eglBase, Intent captureIntent) {
+    public void sendQueue(Context context, EglBase eglBase, Intent captureIntent) {
         if (peerHelper != null) {
             peerHelper.initContext(context, eglBase, captureIntent);
         }
         if (webSocket != null) {
-            webSocket.sendPre();
+            webSocket.sendQueue("0");
         }
     }
 
@@ -218,6 +204,26 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     @Override
+    public void onWait() {
+        //匹配客服应答-未匹配到客服需等待
+        handler.post(() -> {
+            if (connectEvent != null) {
+                connectEvent.onWait();
+            }
+        });
+    }
+
+    @Override
+    public void onMatch() {
+        //匹配客服应答-已匹配到客服
+        handler.post(() -> {
+            if (connectEvent != null) {
+                connectEvent.onMatch();
+            }
+        });
+    }
+
+    @Override
     public void onQueue() {
         //发起预通话配置-返回排队中
         handler.post(() -> {
@@ -229,7 +235,7 @@ public class WebRtcManager implements IWebRtcEvents {
 
     @Override
     public void onSendCall(ArrayList<String> connections) {
-        //发起正式通话
+        //发起通话
         handler.post(() -> {
             if (peerHelper != null) {
                 peerHelper.onSendCall(connections, videoEnable, mediaType);

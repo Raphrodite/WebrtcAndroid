@@ -49,7 +49,10 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
         tvConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                hide(null);
+                if(onConfirmListener != null) {
+                    onConfirmListener.onConfirm();
+                }
             }
         });
         tvCancel.setOnClickListener(new View.OnClickListener() {
@@ -69,5 +72,15 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
     @Override
     public boolean isSetAnimal() {
         return false;
+    }
+
+    public interface OnConfirmListener {
+        void onConfirm();
+    }
+
+    private OnConfirmListener onConfirmListener;
+
+    public void setOnConfirmListener(OnConfirmListener onConfirmListener) {
+        this.onConfirmListener = onConfirmListener;
     }
 }

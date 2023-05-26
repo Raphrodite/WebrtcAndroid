@@ -1,10 +1,10 @@
 package com.example.chatwebrtc.websocket;
 
-import static com.example.chatwebrtc.websocket.WebSocketData.getCall;
-import static com.example.chatwebrtc.websocket.WebSocketData.getHeartMap;
-import static com.example.chatwebrtc.websocket.WebSocketData.getIceCandidate;
-import static com.example.chatwebrtc.websocket.WebSocketData.getOffer;
-import static com.example.chatwebrtc.websocket.WebSocketData.getPreCall;
+import static com.example.chatwebrtc.websocket.WebSocketData.getCallMapByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getHeartMapByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getIceByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getOfferByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getQueueMapByToken;
 
 import android.os.Handler;
 import android.util.Log;
@@ -12,9 +12,12 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.example.chatwebrtc.bean.EventMessage;
+import com.example.chatwebrtc.bean.VideoInfoBean;
 import com.example.chatwebrtc.webrtc.IWebRtcEvents;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +28,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+import org.greenrobot.eventbus.EventBus;
 import org.webrtc.IceCandidate;
 
 /**
@@ -45,9 +49,9 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     private final String TAG = "WebSocketManager_zrzr";
 
     /**
-     * 可替换为自己的主机名和端口号 ws://192.168.13.109:14000/wst
+     * 可替换为自己的主机名和端口号 ws://192.168.13.109:14000/wst  ws://192.168.13.14:14000/vtm/wst wss://rpc.stdlnj.cn/wst ws://192.168.13.109:14000/vtm/wst
      */
-    private final String WEBSOCKET_HOST_AND_PORT = "wss://rpc.stdlnj.cn/wst";
+    private final String WEBSOCKET_HOST_AND_PORT = "https://rpc.stdlnj.cn/vtm/wst";
 
     /**
      * 是否连接成功
@@ -83,6 +87,8 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
      * 对回调信息进行处理
      */
     private IWebRtcEvents events;
+
+    private String callFromId = "";
 
     /**
      * 初始化events
@@ -121,7 +127,8 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         //回调连接成功
         events.onWebSocketOpen();
         //连接成功 发送心跳包
-        boolean isSuccess = send(getHeartMap());
+        boolean isSuccess = send(getHeartMapByToken());
+        Log.e(TAG, "isSuccess = " + isSuccess);
         if (!isSuccess) {
             //初始心跳消息发送成功失败
             mHandler.removeCallbacks(heartBeatRunnable);
@@ -157,7 +164,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     public void onClosing(WebSocket webSocket, int code, String reason) {
         super.onClosing(webSocket, code, reason);
         //客户端主动关闭时回调
-        Log.e(TAG, "onClosing");
+        Log.e(TAG, "onClosing = " + reason + ", code = " + code);
     }
 
     @Override
@@ -171,7 +178,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
         //连接失败回调
-        Log.e(TAG, "onFailure");
+        Log.e(TAG, "onFailure = " + t.getMessage());
         //回调连接失败
         events.onWebSocketFailed(t.toString());
     }
@@ -192,39 +199,57 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     }
 
     /**
-     * 发起预通话配置(分配对应客服)
+     * 匹配客服
+     * @param againQueue 重新排队时传1 （客服长时间未接听、客服拒接）
      */
     @Override
-    public void sendPre() {
-        Log.e(TAG, "sendPre");
-        String message = getPreCall();
+    public void sendQueue(String againQueue) {
+        Log.e(TAG, "匹配客服---");
+        String message = getQueueMapByToken(againQueue);
         send(message);
     }
 
     /**
-     * 发起正式通话
-     * @param offerId  安卓客户端ID
-     * @param answerId 分配的客服ID（浏览器端登录用户ID，仅当connectStatus为0时有值）
+     * 发起通话
+     * @param serverId 配对到的客服id
      */
     @Override
-    public void sendCall(String offerId, String answerId) {
-        Log.e(TAG, "sendCall");
-        String message = getCall(offerId, answerId);
+    public void sendCall(String serverId) {
+        Log.e(TAG, "发起通话---");
+        String message = getCallMapByToken(serverId);
         send(message);
     }
 
-
+    /**
+     * 发送offer
+     * @param sdp
+     */
     @Override
-    public void sendOffer(String sdp) {
-        Log.e(TAG, "sendOffer");
-        String message = getOffer("111", "111", sdp);
+    public void sendOffer(String sdp, List<String> mids) {
+        Log.e(TAG, "发送Offer---");
+        List<VideoInfoBean> list = new ArrayList<>();
+        for (int i = 0; i < mids.size(); i++) {
+            VideoInfoBean bean = new VideoInfoBean();
+            bean.mid = Integer.parseInt(mids.get(i));
+            if (i == 0) {
+                bean.videoType = "VIDEO";
+            } else if (i == 1) {
+                bean.videoType = "SCREEN";
+            }
+            list.add(bean);
+        }
+        String message = getOfferByToken(callFromId, sdp, list);
         send(message);
     }
 
+    /**
+     * 发送Ice
+     * @param iceCandidate
+     */
     @Override
     public void sendIceCandidate(IceCandidate iceCandidate) {
-        Log.e(TAG, "sendIceCandidate");
-        String message = getIceCandidate(iceCandidate);
+        Log.e(TAG, "发送Ice---");
+        String message = getIceByToken(callFromId, iceCandidate);
         send(message);
     }
 
@@ -238,61 +263,52 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
             //这个是回调数据
             JSONObject jsonObject = JSON.parseObject(message);
 
-            //发起预通话配置-分配成功
+            //匹配客服应答报文
             if (jsonObject.getString("type") != null
-                    && "START_ACK".equals(jsonObject.getString("type"))) {
-                //连接状态 connectStatus 0-分配成功 1-需要排队
-                int connectStatus = jsonObject.getIntValue("connectStatus");
-                String offerId = jsonObject.getString("offerId");
-                if (connectStatus == 0) {
-                    //预通话配置 分配成功 发起正式通话
-                    String answerId = jsonObject.getString("answerId");
-                    sendCall(answerId, offerId);
+                    && "QUEUE_ACK".equals(jsonObject.getString("type"))) {
+                //配对到的客服id，为null时表示未匹配到客服需等待
+                String serverId = jsonObject.getString("serverId");
+                if (serverId != null) {
+                    //配对到客服 发起通话
+                    events.onMatch();
+                    sendCall(serverId);
+                } else {
+                    //客服等待中
+                    events.onWait();
                 }
             }
 
-            //发起预通话配置-排队中
-            if (jsonObject.getString("type") != null
-                    && "QUEUE".equals(jsonObject.getString("type"))) {
-                //排队中
-                events.onQueue();
-            }
-
-            //发起正式通话回调
+            //通话响应报文
             if (jsonObject.getString("type") != null
                     && "CALL_ACK".equals(jsonObject.getString("type"))) {
                 String callStatus = jsonObject.getString("callStatus");
-                String offerId = jsonObject.getString("offerId");
                 //web点击接听
-                if("ANSWER".equals(callStatus)) {
-                    String answerId = jsonObject.getString("answerId");
+                if ("ANSWER".equals(callStatus)) {
+                    String fromId = jsonObject.getString("fromId");
+                    String toId = jsonObject.getString("toId");
+                    callFromId = fromId;
                     ArrayList<String> connections = new ArrayList<>();
-                    connections.add(answerId);
-                    //发起正式通话
+                    connections.add(fromId);
+                    //发起通话
                     events.onSendCall(connections);
                     //即将接通
                     events.onCall();
                 }
-                //web点击挂断
-                if("HANGUP".equals(callStatus)) {
-                    //挂断
-                    events.onHangUp();
-                }
             }
 
-            //发送offer 接收到answer
+            //通话连接应答报文 接收到answer
             if(jsonObject.getString("type") != null
                     && "ANSWER".equals(jsonObject.getString("type"))) {
                 Map map = JSON.parseObject(message, Map.class);
                 Map desc = (Map) map.get("description");
                 String sdp = (String) desc.get("sdp");
 
-                String id = jsonObject.getString("answerId");
+                String id = jsonObject.getString("fromId");
 
                 events.onReceiveAnswer(id, sdp);
             }
 
-            //接收到ice报文
+            //通道信息应答报文
             if(jsonObject.getString("type") != null
                     && "ICE".equals(jsonObject.getString("type"))) {
 
@@ -306,6 +322,13 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
                 String id = jsonObject.getString("fromId");
 
                 events.onRemoteIceCandidate(id, iceCandidate);
+            }
+
+            //挂断请求应答报文
+            if (jsonObject.getString("type") != null
+                    && "HANGUP_ACK".equals(jsonObject.getString("type"))) {
+
+                String id = jsonObject.getString("id");
             }
 
         } catch (JSONException e) {
@@ -324,6 +347,10 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         boolean isSendSuccess = false;
         if(mWebSocket != null) {
             Log.e(TAG, "send = " + message);
+
+            EventMessage msg = new EventMessage(1, message);
+            EventBus.getDefault().post(msg);
+
             isSendSuccess = mWebSocket.send(message);
         }
         return isSendSuccess;
@@ -360,6 +387,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         }
     }
 
+
     /**
      * 创建WebSocket的线程
      */
@@ -385,7 +413,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
             if (System.currentTimeMillis() - sendTime >= HEART_BEAT_RATE) {
                 if (mWebSocket != null) {
                     //发送一个消息给服务器，通过发送消息的成功失败来判断长连接的连接状态
-                    boolean isSuccess = send(getHeartMap());
+                    boolean isSuccess = send(getHeartMapByToken());
                     if (!isSuccess) {
                         //长连接已断开
                         Log.e(TAG, "发送心跳包-------------长连接已断开");
