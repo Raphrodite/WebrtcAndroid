@@ -17,27 +17,25 @@ package org.webrtc;
 public class IceCandidate {
   public final String sdpMid;
   public final int sdpMLineIndex;
-  public final String sdp;
-  public final String serverUrl;
+  public final String candidate;
 
-  public IceCandidate(String sdpMid, int sdpMLineIndex, String sdp) {
+  public IceCandidate(String sdpMid, int sdpMLineIndex, String candidate) {
     this.sdpMid = sdpMid;
     this.sdpMLineIndex = sdpMLineIndex;
-    this.sdp = sdp;
-    this.serverUrl = "";
+    this.candidate = candidate;
+
   }
 
   @CalledByNative
-  IceCandidate(String sdpMid, int sdpMLineIndex, String sdp, String serverUrl) {
+  IceCandidate(String sdpMid, int sdpMLineIndex, String candidate, String serverUrl) {
     this.sdpMid = sdpMid;
     this.sdpMLineIndex = sdpMLineIndex;
-    this.sdp = sdp;
-    this.serverUrl = serverUrl;
+    this.candidate = candidate;
   }
 
   @Override
   public String toString() {
-    return sdpMid + ":" + sdpMLineIndex + ":" + sdp + ":" + serverUrl;
+    return sdpMid + ":" + sdpMLineIndex + ":" + candidate + ":";
   }
 
   @CalledByNative
@@ -45,8 +43,4 @@ public class IceCandidate {
     return sdpMid;
   }
 
-  @CalledByNative
-  String getSdp() {
-    return sdp;
-  }
 }

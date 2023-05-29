@@ -864,7 +864,7 @@ public class PeerConnection {
   }
 
   public boolean addIceCandidate(IceCandidate candidate) {
-    return nativeAddIceCandidate(candidate.sdpMid, candidate.sdpMLineIndex, candidate.sdp);
+    return nativeAddIceCandidate(candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
   }
 
   public boolean removeIceCandidates(final IceCandidate[] candidates) {

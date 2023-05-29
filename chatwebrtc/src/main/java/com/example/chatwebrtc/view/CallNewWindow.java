@@ -155,13 +155,20 @@ public class CallNewWindow extends BaseFloatingWindow {
             public void onSetLocalStream(MediaStream stream) {
                 //设置本地
                 Log.e(TAG, "onSetLocalStream");
-//                if (stream.videoTracks.size() > 0) {
-//                    stream.videoTracks.get(0).addSink(localRender);
-//                }
-//
-//                if (videoEnable) {
-//                    stream.videoTracks.get(0).setEnabled(true);
-//                }
+                if (stream.videoTracks.size() > 0) {
+                    stream.videoTracks.get(0).addSink(localRender);
+                }
+
+                if (videoEnable) {
+                    stream.videoTracks.get(0).setEnabled(true);
+
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            local_view.setVisibility(View.GONE);
+                        }
+                    });
+                }
             }
 
             @Override
