@@ -1,4 +1,4 @@
-package com.example.webrtcandroid.http;
+package com.example.chatwebrtc.bean;
 
 /**
  * * Copyright * 圣通电力
@@ -11,11 +11,20 @@ package com.example.webrtcandroid.http;
  * @CreateDate: 2023/5/22
  */
 public class JsonResult<T> {
-    //状态 0 成功  1失败
+
+    /**
+     * 状态 0 成功  1失败
+     */
     private int state;
-    //主要数据
+
+    /**
+     * 主要数据
+     */
     private String data;
-    //附加数据
+
+    /**
+     * 附加数据
+     */
     private String message;
 
     public int getState() {
@@ -38,7 +47,7 @@ public class JsonResult<T> {
         return message;
     }
 
-    public void setMessage(String mmessagesg) {
+    public void setMessage(String messagesg) {
         this.message = message;
     }
 }

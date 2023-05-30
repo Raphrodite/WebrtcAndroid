@@ -119,9 +119,7 @@ public class MainActivity extends BaseActivity {
     @Subscribe
     public void onReceiveMsg(EventMessage message) {
         String receiveMesg = message.getMessage();
-//        Log.e("zrzr", "onReceiveMsg = " + receiveMesg);
         event = event + receiveMesg + "\n";
-//        Log.e("zrzr", "event = " + event);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

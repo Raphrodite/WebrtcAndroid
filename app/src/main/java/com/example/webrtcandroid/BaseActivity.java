@@ -18,8 +18,8 @@ import com.example.chatwebrtc.view.ConfirmCallWindow;
 import com.example.chatwebrtc.view.RobotWindow;
 import com.example.chatwebrtc.webrtc.WebRtcUtil;
 import com.example.chatwebrtc.bean.LoginUseBean;
-import com.example.webrtcandroid.http.JsonResult;
-import com.example.webrtcandroid.http.OkhttpUtils;
+import com.example.chatwebrtc.bean.JsonResult;
+import com.example.chatwebrtc.http.OkhttpUtils;
 import com.google.gson.Gson;
 
 import org.webrtc.ScreenCapturerAndroid;

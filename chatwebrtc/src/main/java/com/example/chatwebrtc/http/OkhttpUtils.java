@@ -1,12 +1,11 @@
-package com.example.webrtcandroid.http;
+package com.example.chatwebrtc.http;
 
 import android.app.Activity;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
+import com.example.chatwebrtc.bean.JsonResult;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -267,8 +266,7 @@ public class OkhttpUtils {
      *
      * @param activity  Activity
      * @param result    JsonResult 拿到的数据
-     * @param iCallBack 回调接口
-     */
+     * @param iCallBack 回调接口     */
     private static void requestSuccess(Activity activity, final JsonResult result, final ICallBack iCallBack) {
         activity.runOnUiThread(() -> {
             if (iCallBack != null) {
