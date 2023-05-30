@@ -224,16 +224,6 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     @Override
-    public void onQueue() {
-        //发起预通话配置-返回排队中
-        handler.post(() -> {
-            if (connectEvent != null) {
-                connectEvent.onQueue();
-            }
-        });
-    }
-
-    @Override
     public void onSendCall(ArrayList<String> connections) {
         //发起通话
         handler.post(() -> {
@@ -249,9 +239,9 @@ public class WebRtcManager implements IWebRtcEvents {
     @Override
     public void onReceiveAnswer(String id, String sdp) {
         //发送offer接收到answer
-        Log.e(TAG, "onReceiverAnswer");
         handler.post(() -> {
             if (peerHelper != null) {
+                Log.e(TAG, "onReceiverAnswer");
                 peerHelper.onReceiverAnswer(id, sdp);
             }
         });
@@ -260,20 +250,10 @@ public class WebRtcManager implements IWebRtcEvents {
     @Override
     public void onRemoteIceCandidate(String id, IceCandidate iceCandidate) {
         //接收到ice回调
-        Log.e(TAG, "onRemoteIceCandidate");
         handler.post(() -> {
             if (peerHelper != null) {
+                Log.e(TAG, "onRemoteIceCandidate");
                 peerHelper.onRemoteIceCandidate(id, iceCandidate);
-            }
-        });
-    }
-
-    @Override
-    public void onHangUp() {
-        //挂断
-        handler.post(() -> {
-            if (connectEvent != null) {
-                connectEvent.onHangUp();
             }
         });
     }
@@ -283,7 +263,19 @@ public class WebRtcManager implements IWebRtcEvents {
         //即将接通
         handler.post(() -> {
             if (connectEvent != null) {
+                Log.e(TAG, "onCall");
                 connectEvent.onCall();
+            }
+        });
+    }
+
+    @Override
+    public void onHangUp() {
+        //web挂断
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onHangUp");
+                connectEvent.onHangUp();
             }
         });
     }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Chronometer;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
@@ -83,9 +84,9 @@ public class CallNewWindow extends BaseFloatingWindow {
     private TextView tvHangUp;
 
     /**
-     * 呼叫状态 区域
+     * 呼叫状态 区域; 没有客服摄像头 区域
      */
-    private RelativeLayout rlCallStatus;
+    private RelativeLayout rlCallStatus, rlNoCamera;
 
     /**
      * 呼叫状态 文字
@@ -128,6 +129,7 @@ public class CallNewWindow extends BaseFloatingWindow {
         tvCallStatus = mRootView.findViewById(R.id.tv_call_status);
         tvInfo = mRootView.findViewById(R.id.tv_info);
         timer = mRootView.findViewById(R.id.timer);
+        rlNoCamera = mRootView.findViewById(R.id.rl_no_camera);
 
         rootEglBase = EglBase.create();
 
@@ -182,11 +184,24 @@ public class CallNewWindow extends BaseFloatingWindow {
                 Log.e(TAG, "onAddRemoteStream");
                 Log.e(TAG, "stream size = " + stream.videoTracks.size());
                 if (stream.videoTracks.size() > 0) {
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            rlNoCamera.setVisibility(View.GONE);
+                        }
+                    });
                     stream.videoTracks.get(0).addSink(remoteRender);
+                    stream.videoTracks.get(0).setEnabled(true);
+                } else {
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            rlNoCamera.setVisibility(View.VISIBLE);
+                        }
+                    });
+
                 }
                 if (videoEnable) {
-                    stream.videoTracks.get(0).setEnabled(true);
-
                     setSwappedFeeds(false);
                 }
             }
@@ -306,6 +321,7 @@ public class CallNewWindow extends BaseFloatingWindow {
      * 断开连接
      */
     private void disconnect() {
+        Toast.makeText(mContext, "通话已断开", Toast.LENGTH_SHORT).show();
         manager.exitCall();
         if (localRender != null) {
             localRender.setTarget(null);

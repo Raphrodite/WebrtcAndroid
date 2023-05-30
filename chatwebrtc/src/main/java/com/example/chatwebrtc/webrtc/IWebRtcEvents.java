@@ -38,11 +38,6 @@ public interface IWebRtcEvents {
     void onMatch();
 
     /**
-     * 预通话配置-返回排队中
-     */
-    void onQueue();
-
-    /**
      * 发起通话
      * @param connections
      */
@@ -63,12 +58,12 @@ public interface IWebRtcEvents {
     void onRemoteIceCandidate(String id, IceCandidate iceCandidate);
 
     /**
-     * web点击挂断
-     */
-    void onHangUp();
-
-    /**
      * web点击接听
      */
     void onCall();
+
+    /**
+     * web挂断
+     */
+    void onHangUp();
 }

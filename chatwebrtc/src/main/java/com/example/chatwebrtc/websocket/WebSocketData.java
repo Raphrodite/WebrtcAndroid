@@ -131,14 +131,14 @@ public class WebSocketData {
     }
 
     /**
-     * 挂断请求发起报文
+     * 挂断应答报文
      * type 固定为HANGUP
      * id token
      * @return
      */
     public static String getHangUpByToken() {
         Map<String, Object> map = new HashMap<>();
-        map.put("type", "HANGUP");
+        map.put("type", "HANGUP_ACK");
         map.put("id", TOKEN);
         return mapToString(map);
     }

@@ -34,17 +34,12 @@ public interface IConnectEvent {
     void onMatch();
 
     /**
-     * 排队中
-     */
-    void onQueue();
-
-    /**
-     * web点击挂断
-     */
-    void onHangUp();
-
-    /**
      * web点击接听
      */
     void onCall();
+
+    /**
+     * web 挂断
+     */
+    void onHangUp();
 }

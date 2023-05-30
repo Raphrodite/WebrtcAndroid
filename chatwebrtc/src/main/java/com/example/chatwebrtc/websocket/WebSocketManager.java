@@ -1,6 +1,7 @@
 package com.example.chatwebrtc.websocket;
 
 import static com.example.chatwebrtc.websocket.WebSocketData.getCallMapByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getHangUpByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getHeartMapByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getIceByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getOfferByToken;
@@ -221,8 +222,9 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     }
 
     /**
-     * 发送offer
+     * 发送offer 建立通话连接
      * @param sdp
+     * @param mids
      */
     @Override
     public void sendOffer(String sdp, List<String> mids) {
@@ -243,13 +245,23 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     }
 
     /**
-     * 发送Ice
+     * 发送Ice 通道信息
      * @param iceCandidate
      */
     @Override
     public void sendIceCandidate(IceCandidate iceCandidate) {
         Log.e(TAG, "发送Ice---");
         String message = getIceByToken(callFromId, iceCandidate);
+        send(message);
+    }
+
+    /**
+     * 挂断应答
+     */
+    @Override
+    public void sendHangUp() {
+        Log.e(TAG, "挂断应答---");
+        String message = getHangUpByToken();
         send(message);
     }
 
@@ -324,11 +336,14 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
                 events.onRemoteIceCandidate(id, iceCandidate);
             }
 
-            //挂断请求应答报文
+            //web挂断 收到的
             if (jsonObject.getString("type") != null
-                    && "HANGUP_ACK".equals(jsonObject.getString("type"))) {
+                    && "HANGUP".equals(jsonObject.getString("type"))) {
 
-                String id = jsonObject.getString("id");
+                //发送挂断应答报文
+                sendHangUp();
+
+                events.onHangUp();
             }
 
         } catch (JSONException e) {

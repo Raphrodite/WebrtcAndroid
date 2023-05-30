@@ -42,6 +42,26 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/rl_no_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ff0000"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="客服摄像头暂时无法使用..."
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                />
+
+        </RelativeLayout>
+
         <!--挂断-->
         <TextView
             android:id="@+id/tv_hang_up"
@@ -61,7 +81,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="客服姓名XXXX 工号XXXXX"
-            android:textColor="@color/white"
             />
         
         <Chronometer

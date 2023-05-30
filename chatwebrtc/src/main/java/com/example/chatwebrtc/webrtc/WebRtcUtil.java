@@ -77,24 +77,15 @@ public class WebRtcUtil {
             }
 
             @Override
-            public void onQueue() {
-                //排队中
-                Toast.makeText(activity, "当前正在排队中", Toast.LENGTH_SHORT).show();
-                //展示排队状态页面
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_QUEUE);
+            public void onCall() {
+                //web点击接听 展示即将接通状态页面
+                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_SOON);
             }
 
             @Override
             public void onHangUp() {
-                //web点击挂断
+                //web 挂断
                 CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_HANG_UP);
-                Toast.makeText(activity, "通话已被挂断", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCall() {
-                //web点击接听 展示即将接通状态页面
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_SOON);
             }
         });
         //建立连接

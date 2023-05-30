@@ -45,17 +45,22 @@ public interface IWebSocket {
     void sendCall(String serverId);
 
     /**
-     * 发送offer信息
+     * 发送offer信息 建立通话连接
      * @param sdp
      * @param mids
      */
     void sendOffer(String sdp, List<String> mids);
 
     /**
-     * 发送Ice信息
+     * 发送Ice信息 通道信息
      * @param iceCandidate
      */
     void sendIceCandidate(IceCandidate iceCandidate);
+
+    /**
+     * 挂断应答
+     */
+    void sendHangUp();
 
     /**
      * 处理接收到的数据
