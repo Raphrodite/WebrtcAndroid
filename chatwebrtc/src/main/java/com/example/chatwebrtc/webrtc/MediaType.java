@@ -21,9 +21,4 @@ public class MediaType {
      * 视频
      */
     public final static int TYPE_VIDEO = 1;
-
-    /**
-     * 会议
-     */
-    public final static int TYPE_MEETING = 2;
 }

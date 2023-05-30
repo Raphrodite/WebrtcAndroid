@@ -89,6 +89,9 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
      */
     private IWebRtcEvents events;
 
+    /**
+     * 客服id-websocket回调
+     */
     private String callFromId = "";
 
     /**
@@ -129,7 +132,6 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         events.onWebSocketOpen();
         //连接成功 发送心跳包
         boolean isSuccess = send(getHeartMapByToken());
-        Log.e(TAG, "isSuccess = " + isSuccess);
         if (!isSuccess) {
             //初始心跳消息发送成功失败
             mHandler.removeCallbacks(heartBeatRunnable);
@@ -148,7 +150,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         super.onMessage(webSocket, text);
         isOpen = true;
         //接收消息的回调
-        Log.e(TAG, "onMessage String = " + text);
+        Log.e(TAG, "WebSocket 接收的 onMessage = " + text);
         //处理接收到的消息
         handleMessage(text);
     }
@@ -192,9 +194,10 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
      */
     @Override
     public void connect(String url) {
-        Log.e(TAG, "connect");
+        Log.e(TAG, "WebSocket connect--");
+        //连接之前先关闭
         close();
-        //连接地址
+        //连接地址 目前是写死的 不是传递过来的
         webSocketUrl = url;
         new InitSocketThread().start();
     }
@@ -223,8 +226,8 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
 
     /**
      * 发送offer 建立通话连接
-     * @param sdp
-     * @param mids
+     * @param sdp sdp描述
+     * @param mids mid集合
      */
     @Override
     public void sendOffer(String sdp, List<String> mids) {
@@ -246,7 +249,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
 
     /**
      * 发送Ice 通道信息
-     * @param iceCandidate
+     * @param iceCandidate ice通道信息描述
      */
     @Override
     public void sendIceCandidate(IceCandidate iceCandidate) {
@@ -361,7 +364,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     public boolean send(String message) {
         boolean isSendSuccess = false;
         if(mWebSocket != null) {
-            Log.e(TAG, "send = " + message);
+            Log.e(TAG, "WebSocket 发送的 = " + message);
 
             EventMessage msg = new EventMessage(1, message);
             EventBus.getDefault().post(msg);
@@ -375,12 +378,16 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
      * 取消WebSocket
      */
     public void cancel() {
-        Log.e(TAG, "cancel");
+        Log.e(TAG, "WebSocket cancel--");
         if (mWebSocket != null) {
             mWebSocket.cancel();
         }
     }
 
+    /**
+     * WebSocket 是否打开
+     * @return
+     */
     @Override
     public boolean isOpen() {
         return isOpen;
@@ -391,7 +398,7 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
      */
     @Override
     public void close() {
-        Log.e(TAG, "close");
+        Log.e(TAG, "WebSocket close--");
         if (mWebSocket != null) {
             //关闭连接
             mWebSocket.close(1000, null);

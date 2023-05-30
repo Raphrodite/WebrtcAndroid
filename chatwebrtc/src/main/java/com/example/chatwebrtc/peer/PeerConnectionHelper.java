@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.chatwebrtc.IViewCallback;
-import com.example.chatwebrtc.webrtc.MediaType;
 import com.example.chatwebrtc.webrtc.MyIceServer;
 import com.example.chatwebrtc.websocket.IWebSocket;
 
@@ -96,10 +95,11 @@ public class PeerConnectionHelper {
     public VideoTrack screenVideoTrack;
     public AudioTrack screenAudioTrack;
     public VideoCapturer captureAndroid;
+    public VideoCapturer screenCaptureAndroid;
     public VideoSource videoSource;
     public AudioSource audioSource;
     public VideoSource screenVideoSource;
-    public AudioSource screemAudioSource;
+    public AudioSource screenAudioSource;
 
     /**
      * 初始化参数
@@ -124,11 +124,6 @@ public class PeerConnectionHelper {
     private AudioManager mAudioManager;
 
     /**
-     * 媒体类型
-     */
-    public int mediaType;
-
-    /**
      * peer连接id集合
      */
     public ArrayList<String> connectionIdArray;
@@ -146,6 +141,8 @@ public class PeerConnectionHelper {
     public IViewCallback viewCallback;
 
     private SurfaceTextureHelper surfaceTextureHelper;
+
+    private SurfaceTextureHelper screenSurfaceTextureHelper;
 
     /**
      * 线程池
@@ -215,11 +212,9 @@ public class PeerConnectionHelper {
      * 发起正式通话
      * @param connections
      * @param isVideoEnable
-     * @param mediaType
      */
-    public void onSendCall(ArrayList<String> connections, boolean isVideoEnable, int mediaType) {
+    public void onSendCall(ArrayList<String> connections, boolean isVideoEnable) {
         videoEnable = isVideoEnable;
-        this.mediaType = mediaType;
         executor.execute(() -> {
             connectionIdArray.addAll(connections);
             if (factory == null) {
@@ -320,9 +315,6 @@ public class PeerConnectionHelper {
             // 视频
             surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", rootEglBase.getEglBaseContext());
             videoSource = factory.createVideoSource(captureAndroid.isScreencast());
-            if (mediaType == MediaType.TYPE_MEETING) {
-                // videoSource.adaptOutputFormat(200, 200, 15);
-            }
             captureAndroid.initialize(surfaceTextureHelper, context, videoSource.getCapturerObserver());
             captureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
             localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
@@ -339,15 +331,15 @@ public class PeerConnectionHelper {
     private void createScreenStream() {
         screenStream = factory.createLocalMediaStream("SCREENSTREAM");
         // 音频
-        screemAudioSource = factory.createAudioSource(createAudioConstraints());
-        screenAudioTrack = factory.createAudioTrack("audioScreen", screemAudioSource);
+        screenAudioSource = factory.createAudioSource(createAudioConstraints());
+        screenAudioTrack = factory.createAudioTrack("audioScreen", screenAudioSource);
         screenStream.addTrack(screenAudioTrack);
 
         if (videoEnable) {
             //创建需要传入设备的名称
             //屏幕共享
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                captureAndroid = new ScreenCapturerAndroid(captureIntent, new MediaProjection.Callback() {
+                screenCaptureAndroid = new ScreenCapturerAndroid(captureIntent, new MediaProjection.Callback() {
                     @Override
                     public void onStop() {
                         super.onStop();
@@ -355,13 +347,10 @@ public class PeerConnectionHelper {
                 });
             }
             // 视频
-            SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThreadScreen", rootEglBase.getEglBaseContext());
-            screenVideoSource = factory.createVideoSource(captureAndroid.isScreencast());
-            if (mediaType == MediaType.TYPE_MEETING) {
-                // videoSource.adaptOutputFormat(200, 200, 15);
-            }
-            captureAndroid.initialize(surfaceTextureHelper, context, screenVideoSource.getCapturerObserver());
-            captureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
+            screenSurfaceTextureHelper = SurfaceTextureHelper.create("CaptureThreadScreen", rootEglBase.getEglBaseContext());
+            screenVideoSource = factory.createVideoSource(screenCaptureAndroid.isScreencast());
+            screenCaptureAndroid.initialize(screenSurfaceTextureHelper, context, screenVideoSource.getCapturerObserver());
+            screenCaptureAndroid.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
             screenVideoTrack = factory.createVideoTrack("videoScreen", screenVideoSource);
             screenStream.addTrack(screenVideoTrack);
         }
@@ -506,9 +495,22 @@ public class PeerConnectionHelper {
                 captureAndroid.dispose();
                 captureAndroid = null;
             }
+            if (screenCaptureAndroid != null) {
+                try {
+                    screenCaptureAndroid.stopCapture();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                screenCaptureAndroid.dispose();
+                screenCaptureAndroid = null;
+            }
             if (surfaceTextureHelper != null) {
                 surfaceTextureHelper.dispose();
                 surfaceTextureHelper = null;
+            }
+            if (screenSurfaceTextureHelper != null) {
+                screenSurfaceTextureHelper.dispose();
+                screenSurfaceTextureHelper = null;
             }
             if (factory != null) {
                 factory.dispose();
@@ -730,7 +732,6 @@ public class PeerConnectionHelper {
                     for (RtpTransceiver transceiver : pc.getTransceivers()) {
                         if (transceiver.getMediaType() == MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO) {
                             String mid = transceiver.getMid();
-                            Log.e(TAG, "mid = " + mid);
                             mids.add(mid);
                         }
                     }

@@ -999,23 +999,19 @@ public class PeerConnection {
 
   public RtpSender addTrack(MediaStreamTrack track, MediaStream stream) {
     List<String> ids = new ArrayList<>();
-    Log.e("zrzr", "ids = " + stream.getId());
     ids.add(stream.getId());
     return addTrack(track, ids);
   }
 
   public RtpSender addTrack(MediaStreamTrack track, List<String> streamIds) {
     if (track == null || streamIds == null) {
-      Log.e("zrzr", "senders aa");
       throw new NullPointerException("No MediaStreamTrack specified in addTrack.");
     }
     RtpSender newSender = nativeAddTrack(track.getNativeMediaStreamTrack(), streamIds);
     if (newSender == null) {
-      Log.e("zrzr", "senders bb");
       throw new IllegalStateException("C++ addTrack failed.");
     }
     senders.add(newSender);
-    Log.e("zrzr", "senders size = " + senders.size());
     return newSender;
   }
 

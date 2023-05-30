@@ -6,7 +6,7 @@ package com.example.chatwebrtc;
  * @ProjectName: WebrtcAndroid
  * @Package: com.example.webrtcandroid
  * @ClassName: IConnectEvent
- * @Description: 连接状态事件
+ * @Description: 连接状态事件-WebSocket
  * @Author: Raphrodite
  * @CreateDate: 2023/2/15
  */

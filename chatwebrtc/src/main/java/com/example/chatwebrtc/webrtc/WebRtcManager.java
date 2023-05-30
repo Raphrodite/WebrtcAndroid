@@ -159,6 +159,10 @@ public class WebRtcManager implements IWebRtcEvents {
         }
     }
 
+    /**
+     * 扬声器
+     * @param enable
+     */
     public void toggleSpeaker(boolean enable) {
         if (peerHelper != null) {
             peerHelper.toggleSpeaker(enable);
@@ -228,8 +232,8 @@ public class WebRtcManager implements IWebRtcEvents {
         //发起通话
         handler.post(() -> {
             if (peerHelper != null) {
-                peerHelper.onSendCall(connections, videoEnable, mediaType);
-                if (mediaType == MediaType.TYPE_VIDEO || mediaType == MediaType.TYPE_MEETING) {
+                peerHelper.onSendCall(connections, videoEnable);
+                if (mediaType == MediaType.TYPE_VIDEO) {
                     toggleSpeaker(true);
                 }
             }
