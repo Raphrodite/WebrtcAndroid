@@ -62,19 +62,41 @@
 
         </RelativeLayout>
 
-        <!--挂断-->
-        <TextView
-            android:id="@+id/tv_hang_up"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:drawablePadding="5dp"
-            android:drawableTop="@drawable/webrtc_cancel"
-            android:gravity="center_horizontal"
-            android:text="挂断"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            >
+
+            <!--静音-->
+            <TextView
+                android:id="@+id/tv_mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/webrtc_btn_voice_mute"
+                android:gravity="center_horizontal"
+                android:text="静音"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <!--挂断-->
+            <TextView
+                android:id="@+id/tv_hang_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/webrtc_cancel"
+                android:gravity="center_horizontal"
+                android:text="挂断"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginLeft="30dp"
+                />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_info"

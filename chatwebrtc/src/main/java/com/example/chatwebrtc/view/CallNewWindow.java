@@ -3,6 +3,7 @@ package com.example.chatwebrtc.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -11,9 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
 import com.example.chatwebrtc.utils.CallConfigs;
+import com.example.chatwebrtc.utils.Utils;
 import com.example.chatwebrtc.webrtc.ProxyVideoSink;
 import com.example.chatwebrtc.webrtc.WebRtcManager;
 
@@ -79,9 +83,9 @@ public class CallNewWindow extends BaseFloatingWindow {
     private static Activity mActivity;
 
     /**
-     * 挂断按钮
+     * 挂断按钮;静音按钮
      */
-    private TextView tvHangUp;
+    private TextView tvHangUp, tvMute;
 
     /**
      * 呼叫状态 区域; 没有客服摄像头 区域
@@ -102,6 +106,8 @@ public class CallNewWindow extends BaseFloatingWindow {
      * 计时器
      */
     private Chronometer timer;
+
+    private boolean enableMic = true;
 
     public static CallNewWindow getInstance(Context context) {
         if (instance == null) {
@@ -125,6 +131,7 @@ public class CallNewWindow extends BaseFloatingWindow {
         local_view = mRootView.findViewById(R.id.local_view_render);
         remote_view = mRootView.findViewById(R.id.remote_view_render);
         tvHangUp = mRootView.findViewById(R.id.tv_hang_up);
+        tvMute = mRootView.findViewById(R.id.tv_mute);
         rlCallStatus = mRootView.findViewById(R.id.rl_call_status);
         tvCallStatus = mRootView.findViewById(R.id.tv_call_status);
         tvInfo = mRootView.findViewById(R.id.tv_info);
@@ -230,6 +237,27 @@ public class CallNewWindow extends BaseFloatingWindow {
                 disconnect();
             }
         });
+        //静音 监听
+        tvMute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enableMic = !enableMic;
+                if (enableMic) {
+                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute_default);
+                    if (drawable != null) {
+                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
+                    }
+                    tvMute.setCompoundDrawables(null, drawable, null, null);
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute);
+                    if (drawable != null) {
+                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
+                    }
+                    tvMute.setCompoundDrawables(null, drawable, null, null);
+                }
+                manager.toggleMute(enableMic);
+            }
+        });
     }
 
     @Override
@@ -321,7 +349,12 @@ public class CallNewWindow extends BaseFloatingWindow {
      * 断开连接
      */
     private void disconnect() {
-        Toast.makeText(mContext, "通话已断开", Toast.LENGTH_SHORT).show();
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mContext, "通话已断开", Toast.LENGTH_SHORT).show();
+            }
+        });
         manager.exitCall();
         if (localRender != null) {
             localRender.setTarget(null);
