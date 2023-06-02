@@ -35,7 +35,7 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
 
     @Override
     protected int setLayoutId() {
-        return R.layout.confirm_call_window_layout;
+        return R.layout.layout_confirm_call_window;
     }
 
     @Override
