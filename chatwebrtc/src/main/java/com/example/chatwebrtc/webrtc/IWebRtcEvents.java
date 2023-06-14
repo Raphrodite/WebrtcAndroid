@@ -29,8 +29,9 @@ public interface IWebRtcEvents {
 
     /**
      * 匹配客服应答-未匹配到客服需等待
+     * @param queueCount 等待人数
      */
-    void onWait();
+    void onWait(int queueCount);
 
     /**
      * 匹配客服应答-已匹配到客服
@@ -59,11 +60,29 @@ public interface IWebRtcEvents {
 
     /**
      * web点击接听
+     * @param callType 通话类型：AUDIO 音频、VIDEO 视频
      */
-    void onCall();
+    void onCall(String callType);
 
     /**
      * web挂断
      */
     void onHangUp();
+
+    /**
+     * 切换通话方式
+     * @param beforeCallType 变更前通话类型 AUDIO、VIDEO
+     * @param afterCallType 变更后通话类型 AUDIO、VIDEO
+     */
+    void onChangeCall(String beforeCallType, String afterCallType);
+
+    /**
+     * 切换通话方式取消
+     */
+    void onChangeCancel();
+
+    /**
+     * 自定义消息 摄像头的切换
+     */
+    void onAction(String action);
 }

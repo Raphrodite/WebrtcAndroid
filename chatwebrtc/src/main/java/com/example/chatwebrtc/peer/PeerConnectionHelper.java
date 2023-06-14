@@ -462,6 +462,13 @@ public class PeerConnectionHelper {
         }
     }
 
+    public void closeChatWindow() {
+        if (viewCallback != null) {
+            Log.e(TAG, "closeChatWindow");
+            viewCallback.onClose();
+        }
+    }
+
     /**
      * 退出通话
      */
@@ -630,7 +637,7 @@ public class PeerConnectionHelper {
         @Override
         public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
             Log.e(TAG, "onConnectionChange: " + newState.toString());
-            if (newState.equals(PeerConnection.PeerConnectionState.DISCONNECTED)) {
+            if (newState.equals(PeerConnection.PeerConnectionState.DISCONNECTED) || newState.equals(PeerConnection.PeerConnectionState.FAILED)) {
                 //说明Peer通道关闭 通话结束
                 if (viewCallback != null) {
                     viewCallback.onClose();

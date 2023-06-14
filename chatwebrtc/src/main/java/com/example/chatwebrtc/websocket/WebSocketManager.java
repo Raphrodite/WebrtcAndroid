@@ -1,6 +1,7 @@
 package com.example.chatwebrtc.websocket;
 
 import static com.example.chatwebrtc.websocket.WebSocketData.getCallMapByToken;
+import static com.example.chatwebrtc.websocket.WebSocketData.getChangeCallTypeAckByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getHangUpByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getHeartMapByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getIceByToken;
@@ -268,6 +269,17 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
         send(message);
     }
 
+    /**
+     * 切换通话方式应答
+     * @param ack 应答状态 AGREE同意、REFUSE拒绝
+     */
+    @Override
+    public void sendChangeCallTypeAck(String ack) {
+        Log.e(TAG, "切换通话方式应答---");
+        String message = getChangeCallTypeAckByToken(callFromId, ack);
+        send(message);
+    }
+
     //============================需要发送的 end=====================================
 
     //============================需要接收的 start=====================================
@@ -288,8 +300,9 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
                     events.onMatch();
                     sendCall(serverId);
                 } else {
+                    int queueCount = jsonObject.getIntValue("queueCount");
                     //客服等待中
-                    events.onWait();
+                    events.onWait(queueCount);
                 }
             }
 
@@ -301,13 +314,14 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
                 if ("ANSWER".equals(callStatus)) {
                     String fromId = jsonObject.getString("fromId");
                     String toId = jsonObject.getString("toId");
+                    String callType = jsonObject.getString("callType");
                     callFromId = fromId;
                     ArrayList<String> connections = new ArrayList<>();
                     connections.add(fromId);
                     //发起通话
                     events.onSendCall(connections);
                     //即将接通
-                    events.onCall();
+                    events.onCall(callType);
                 }
             }
 
@@ -348,6 +362,35 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
 
                 events.onHangUp();
             }
+
+            //切换通话方式请求
+            if (jsonObject.getString("type") != null
+                    && "CHANGE_CALL_TYPE".equals(jsonObject.getString("type"))) {
+
+                String beforeCallType = jsonObject.getString("beforeCallType");
+                String afterCallType = jsonObject.getString("afterCallType");
+
+                events.onChangeCall(beforeCallType, afterCallType);
+            }
+
+            //切换通话方式取消
+            if (jsonObject.getString("type") != null
+                    && "CHANGE_CALL_TYPE_CANCEL".equals(jsonObject.getString("type"))) {
+
+                events.onChangeCancel();
+            }
+
+            //自定义消息
+            if (jsonObject.getString("type") != null
+                    && "CUSTOM".equals(jsonObject.getString("type"))) {
+                //OPEN_VIDEO CLOSE_VIDEO
+                String action = jsonObject.getString("action");
+                if ("OPEN_VIDEO".equals(action) || "CLOSE_VIDEO".equals(action)) {
+                    //web发送消息 打开摄像头 和 显示摄像头
+                    events.onAction(action);
+                }
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();

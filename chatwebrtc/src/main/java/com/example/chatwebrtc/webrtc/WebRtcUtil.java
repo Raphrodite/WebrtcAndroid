@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.example.chatwebrtc.IConnectEvent;
 import com.example.chatwebrtc.bean.LoginUseBean;
 import com.example.chatwebrtc.utils.CallConfigs;
-import com.example.chatwebrtc.view.CallNewWindow;
+import com.example.chatwebrtc.view.CallChatWindow;
 
 /**
  * * Copyright * 圣通电力
@@ -53,9 +53,9 @@ public class WebRtcUtil {
             @Override
             public void onSuccess() {
                 //连接成功 开始匹配客服
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_ING);
+                CallChatWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_ING);
                 //发起预通话配置
-                CallNewWindow.getInstance(activity).showTopRight(null, captureIntent);
+                CallChatWindow.getInstance(activity).showTopRight(null, captureIntent);
             }
 
             @Override
@@ -65,27 +65,45 @@ public class WebRtcUtil {
             }
 
             @Override
-            public void onWait() {
+            public void onWait(int queueCount) {
                 //匹配客服应答-未匹配到客服需等待
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_WAIT);
+                CallChatWindow.getInstance(activity).showCallStatusQueue(CallConfigs.CALL_STATUS_WAIT, queueCount);
             }
 
             @Override
             public void onMatch() {
                 //匹配客服应答-已匹配到客服
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_MATCH);
+                CallChatWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_MATCH);
             }
 
             @Override
-            public void onCall() {
+            public void onCall(String callType) {
                 //web点击接听 展示即将接通状态页面
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_SOON);
+                CallChatWindow.getInstance(activity).showCallStatusCallType(CallConfigs.CALL_STATUS_SOON, callType);
             }
 
             @Override
             public void onHangUp() {
                 //web 挂断
-                CallNewWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_HANG_UP);
+                CallChatWindow.getInstance(activity).showCallStatus(CallConfigs.CALL_STATUS_HANG_UP);
+            }
+
+            @Override
+            public void onChangeCall(String beforeCallType, String afterCallType) {
+                //切换通话方式
+                CallChatWindow.getInstance(activity).showChangeCallType(beforeCallType, afterCallType);
+            }
+
+            @Override
+            public void onChangeCancel() {
+                //切换通话方式取消
+                CallChatWindow.getInstance(activity).showChangeCallTypeCancal();
+            }
+
+            @Override
+            public void onAction(String action) {
+                //自定义消息 摄像头的切换
+                CallChatWindow.getInstance(activity).showAction(action);
             }
         });
         //建立连接

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:gravity="center"
-        android:text="是否呼叫人工客服?"
+        android:text="请确认是否挂断电话?"
         android:textSize="20sp"
         />
 

@@ -67,4 +67,10 @@ public interface IWebSocket {
      * @param message
      */
     void handleMessage(String message);
+
+    /**
+     * 切换通话方式应答
+     * @param ack 应答状态 AGREE同意、REFUSE拒绝
+     */
+    void sendChangeCallTypeAck(String ack);
 }

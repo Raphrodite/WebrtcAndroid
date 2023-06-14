@@ -143,4 +143,19 @@ public class WebSocketData {
         return mapToString(map);
     }
 
+    /**
+     * 切换通话方式应答报文
+     * @param toId 接收方id
+     * @param ack 应答状态 AGREE同意、REFUSE拒绝
+     * @return
+     */
+    public static String getChangeCallTypeAckByToken(String toId, String ack) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", "CHANGE_CALL_TYPE_ACK");
+        map.put("fromId", TOKEN);
+        map.put("toId", toId);
+        map.put("ack", ack);
+        return mapToString(map);
+    }
+
 }

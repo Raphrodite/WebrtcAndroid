@@ -28,11 +28,6 @@ public class CallConfigs {
     public static final String CALL_STATUS_MATCH = "callStatusMatch";
 
     /**
-     * websocket连接成功之后，状态-排队中
-     */
-    public static final String CALL_STATUS_QUEUE = "callStatusQueue";
-
-    /**
      * websocket连接成功之后，状态-即将接通
      */
     public static final String CALL_STATUS_SOON = "callStatusSoon";

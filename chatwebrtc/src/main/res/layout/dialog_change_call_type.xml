@@ -7,10 +7,10 @@
     >
 
     <TextView
+        android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:gravity="center"
-        android:text="是否呼叫人工客服?"
         android:textSize="20sp"
         />
 
@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="取消"
+            android:text="拒绝"
             android:textSize="18sp"
             />
 
@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="确认"
+            android:text="同意"
             android:textSize="18sp"
             />
 

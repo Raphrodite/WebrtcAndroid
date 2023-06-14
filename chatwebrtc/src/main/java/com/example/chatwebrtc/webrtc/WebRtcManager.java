@@ -141,6 +141,16 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     /**
+     * 切换通话方式应答
+     * @param ack 应答状态 AGREE同意、REFUSE拒绝
+     */
+    public void sendChangeCallTypeAck(String ack) {
+        if (webSocket != null) {
+            webSocket.sendChangeCallTypeAck(ack);
+        }
+    }
+
+    /**
      * 翻转摄像头
      */
     public void switchCamera() {
@@ -201,6 +211,7 @@ public class WebRtcManager implements IWebRtcEvents {
                 connectEvent.onFailed(msg);
             } else {
                 if (peerHelper != null) {
+                    peerHelper.closeChatWindow();
                     peerHelper.exitCall();
                 }
             }
@@ -208,11 +219,11 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     @Override
-    public void onWait() {
+    public void onWait(int queueCount) {
         //匹配客服应答-未匹配到客服需等待
         handler.post(() -> {
             if (connectEvent != null) {
-                connectEvent.onWait();
+                connectEvent.onWait(queueCount);
             }
         });
     }
@@ -263,12 +274,12 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     @Override
-    public void onCall() {
+    public void onCall(String callType) {
         //即将接通
         handler.post(() -> {
             if (connectEvent != null) {
                 Log.e(TAG, "onCall");
-                connectEvent.onCall();
+                connectEvent.onCall(callType);
             }
         });
     }
@@ -280,6 +291,39 @@ public class WebRtcManager implements IWebRtcEvents {
             if (connectEvent != null) {
                 Log.e(TAG, "onHangUp");
                 connectEvent.onHangUp();
+            }
+        });
+    }
+
+    @Override
+    public void onChangeCall(String beforeCallType, String afterCallType) {
+        //切换通话方式
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onChangeCall");
+                connectEvent.onChangeCall(beforeCallType, afterCallType);
+            }
+        });
+    }
+
+    @Override
+    public void onChangeCancel() {
+        //切换通话方式取消
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onChangeCancel");
+                connectEvent.onChangeCancel();
+            }
+        });
+    }
+
+    @Override
+    public void onAction(String action) {
+        //自定义消息 摄像头的切换
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onAction");
+                connectEvent.onAction(action);
             }
         });
     }

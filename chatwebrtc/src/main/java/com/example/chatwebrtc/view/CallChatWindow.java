@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
+import com.example.chatwebrtc.dialog.ChangeCallTypeDialog;
+import com.example.chatwebrtc.dialog.HangUpConfirmDialog;
 import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.utils.Utils;
 import com.example.chatwebrtc.webrtc.ProxyVideoSink;
@@ -43,7 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * @Author: Raphrodite
  * @CreateDate: 2023/4/6
  */
-public class CallNewWindow extends BaseFloatingWindow {
+public class CallChatWindow extends BaseFloatingWindow {
 
     /**
      * Log TAG
@@ -53,7 +55,7 @@ public class CallNewWindow extends BaseFloatingWindow {
     /**
      * 呼叫弹窗 单例
      */
-    private static CallNewWindow instance;
+    private static CallChatWindow instance;
 
     /**
      * 控件，继承于SurfaceView的渲染View，提供了OpenGL渲染图像数据的功能，加载本地和远端
@@ -109,21 +111,26 @@ public class CallNewWindow extends BaseFloatingWindow {
 
     private boolean enableMic = true;
 
-    public static CallNewWindow getInstance(Context context) {
+    /**
+     * 切换通话方式弹窗
+     */
+    private ChangeCallTypeDialog changeCallTypeDialog;
+
+    public static CallChatWindow getInstance(Context context) {
         if (instance == null) {
             mActivity = (Activity) context;
-            instance = new CallNewWindow(context);
+            instance = new CallChatWindow(context);
         }
         return instance;
     }
 
-    public CallNewWindow(Context context) {
+    public CallChatWindow(Context context) {
         super(context);
     }
 
     @Override
     protected int setLayoutId() {
-        return R.layout.layout_call_new;
+        return R.layout.layout_call_chat;
     }
 
     @Override
@@ -199,14 +206,6 @@ public class CallNewWindow extends BaseFloatingWindow {
                     });
                     stream.videoTracks.get(0).addSink(remoteRender);
                     stream.videoTracks.get(0).setEnabled(true);
-                } else {
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            rlNoCamera.setVisibility(View.VISIBLE);
-                        }
-                    });
-
                 }
                 if (videoEnable) {
                     setSwappedFeeds(false);
@@ -233,8 +232,16 @@ public class CallNewWindow extends BaseFloatingWindow {
         tvHangUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //断开连接
-                disconnect();
+                //挂断弹窗
+                HangUpConfirmDialog confirmDialog = new HangUpConfirmDialog(mActivity);
+                confirmDialog.showDialog(confirmDialog);
+                confirmDialog.setOnConfirmListener(new HangUpConfirmDialog.OnConfirmListener() {
+                    @Override
+                    public void onConfirm() {
+                        //断开连接
+                        disconnect();
+                    }
+                });
             }
         });
         //静音 监听
@@ -285,19 +292,45 @@ public class CallNewWindow extends BaseFloatingWindow {
                 //呼叫中
                 tvCallStatus.setText("匹配客服中...");
                 break;
-            case CallConfigs.CALL_STATUS_WAIT:
-                //匹配客服应答-未匹配到客服需等待
-                tvCallStatus.setText("等待匹配客服中...");
-                break;
             case CallConfigs.CALL_STATUS_MATCH:
                 //匹配客服应答-已匹配到客服
                 tvCallStatus.setText("已匹配到客服...正在发起通话");
                 break;
-            case CallConfigs.CALL_STATUS_QUEUE:
-                //排队中
-                tvCallStatus.setText("当前正在排队中...");
+            case CallConfigs.CALL_STATUS_HANG_UP:
+                //挂断
+                disconnect();
                 break;
+        }
+    }
+
+    /**
+     * 展示呼叫状态界面--目前仅是排队中
+     * @param status callStatusIng-呼叫中， callStatusQueue-排队中
+     */
+    public void showCallStatusQueue(String status, int queueCount) {
+        rlCallStatus.setVisibility(View.VISIBLE);
+        tvInfo.setVisibility(View.GONE);
+        timer.setVisibility(View.GONE);
+        switch (status) {
+            case CallConfigs.CALL_STATUS_WAIT:
+                //匹配客服应答-未匹配到客服需等待
+                tvCallStatus.setText("等待匹配客服中..." + "前面排队人数" + queueCount + "人。");
+                break;
+        }
+    }
+
+    /**
+     * 呼叫接听 接入方式
+     * @param status
+     * @param callType 通话类型：AUDIO 音频、VIDEO 视频
+     */
+    public void showCallStatusCallType(String status, String callType) {
+        rlCallStatus.setVisibility(View.VISIBLE);
+        tvInfo.setVisibility(View.GONE);
+        timer.setVisibility(View.GONE);
+        switch (status) {
             case CallConfigs.CALL_STATUS_SOON:
+                String callTypeText = callType.equals("AUDIO") ? "语音接入" : "视频接入";
                 //即将接通 倒计时提示文字
                 long count = 5L;
                 Flowable.interval(0, 1, TimeUnit.SECONDS)
@@ -316,7 +349,7 @@ public class CallNewWindow extends BaseFloatingWindow {
                             public void onNext(Long aLong) {
                                 //倒计时过程中
                                 Log.e(TAG, "aLong = " + aLong);
-                                tvCallStatus.setText("即将接通..." + (aLong - 1) + "s");
+                                tvCallStatus.setText("即将接通..." + (aLong - 1) + "s" + "..." + callTypeText);
                             }
 
                             @Override
@@ -334,14 +367,60 @@ public class CallNewWindow extends BaseFloatingWindow {
                                 //计时器清零+开始
                                 timer.setBase(SystemClock.elapsedRealtime());
                                 timer.start();
+                                //语音接入 不显示客服摄像头
+                                if (callType.equals("AUDIO")) {
+                                    rlNoCamera.setVisibility(View.VISIBLE);
+                                }
                             }
                         });
 
                 break;
-            case CallConfigs.CALL_STATUS_HANG_UP:
-                //挂断
-                disconnect();
-                break;
+        }
+    }
+
+    /**
+     * 切换通话方式
+     * @param beforeCallType 变更前通话类型 AUDIO、VIDEO
+     * @param afterCallType 变更前通话类型 AUDIO、VIDEO
+     */
+    public void showChangeCallType(String beforeCallType, String afterCallType) {
+        changeCallTypeDialog = new ChangeCallTypeDialog(mActivity);
+        changeCallTypeDialog.showDialog(changeCallTypeDialog, beforeCallType, afterCallType);
+        changeCallTypeDialog.setOnConfirmListener(new ChangeCallTypeDialog.OnConfirmListener() {
+            @Override
+            public void onRefuse() {
+                //拒绝
+                manager.sendChangeCallTypeAck("REFUSE");
+            }
+
+            @Override
+            public void onConfirm() {
+                //同意
+                manager.sendChangeCallTypeAck("AGREE");
+            }
+        });
+    }
+
+    /**
+     * 切换通话方式取消
+     */
+    public void showChangeCallTypeCancal() {
+        if (changeCallTypeDialog != null && changeCallTypeDialog.isShowing()) {
+            changeCallTypeDialog.dismiss();
+        }
+    }
+
+    /**
+     * 自定义消息 摄像头的切换
+     * @param action
+     */
+    public void showAction(String action) {
+        if ("OPEN_VIDEO".equals(action)) {
+            //摄像头打开
+            rlNoCamera.setVisibility(View.GONE);
+        } else {
+            //摄像头关闭
+            rlNoCamera.setVisibility(View.VISIBLE);
         }
     }
 
@@ -352,7 +431,7 @@ public class CallNewWindow extends BaseFloatingWindow {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mContext, "通话已断开", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "连接已断开，通话关闭", Toast.LENGTH_LONG).show();
             }
         });
         manager.exitCall();
