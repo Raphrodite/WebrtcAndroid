@@ -15,8 +15,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.example.chatwebrtc.bean.EventMessage;
+import com.example.chatwebrtc.bean.MouseEventBean;
 import com.example.chatwebrtc.bean.VideoInfoBean;
+import com.example.chatwebrtc.utils.ActionConfigs;
 import com.example.chatwebrtc.webrtc.IWebRtcEvents;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +51,12 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     /**
      * Log tag
      */
-    private final String TAG = "WebSocketManager_zrzr";
+    private static final String TAG = "WebSocketManager_zrzr";
 
     /**
      * 可替换为自己的主机名和端口号 ws://192.168.13.109:14000/wst  ws://192.168.13.14:14000/vtm/wst wss://rpc.stdlnj.cn/wst ws://192.168.13.109:14000/vtm/wst
      */
-    private final String WEBSOCKET_HOST_AND_PORT = "https://rpc.stdlnj.cn/vtm/wst";
+    private static final String WEBSOCKET_HOST_AND_PORT = "https://rpc.stdlnj.cn/vtm/wst";
 
     /**
      * 是否连接成功
@@ -383,10 +386,19 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
             //自定义消息
             if (jsonObject.getString("type") != null
                     && "CUSTOM".equals(jsonObject.getString("type"))) {
-                //OPEN_VIDEO CLOSE_VIDEO
+                //OPEN_VIDEO CLOSE_VIDEO OPEN_DRAW CLOSE_DRAW
                 String action = jsonObject.getString("action");
-                if ("OPEN_VIDEO".equals(action) || "CLOSE_VIDEO".equals(action)) {
-                    //web发送消息 打开摄像头 和 显示摄像头
+                if (ActionConfigs.ACTION_SEND_IMAGE.equals(action)) {
+                    //发送图片
+                    String imageStr = jsonObject.getString("image");
+                    events.onSendImage(imageStr);
+                } else if (ActionConfigs.ACTION_SEND_POINT.equals(action)) {
+                    //远程控制 发送坐标
+                    String mouseEvent = jsonObject.getString("mouseEvent");
+                    MouseEventBean mouseEventBean = new Gson().fromJson(mouseEvent, MouseEventBean.class);
+                    events.onSendPoint(mouseEventBean);
+                } else {
+                    //web发送自定义消息 摄像头切换 开启或关闭涂鸦 开启或关闭远程控制
                     events.onAction(action);
                 }
             }
@@ -451,7 +463,6 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
             mHandler.removeCallbacksAndMessages(null);
         }
     }
-
 
     /**
      * 创建WebSocket的线程

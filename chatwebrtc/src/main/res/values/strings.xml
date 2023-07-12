@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">WebrtcAndroid</string>
-
+    <string name="click_window_screen">可视化自研远程协助，需要实现远程控制功能必须先开启该辅助功能</string>
 </resources>

@@ -3,11 +3,15 @@ package com.example.chatwebrtc.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,8 +20,12 @@ import androidx.core.content.ContextCompat;
 
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
+import com.example.chatwebrtc.bean.MouseEventBean;
+import com.example.chatwebrtc.control.AccessibilityOperator;
+import com.example.chatwebrtc.control.BRScreenManagerUtils;
 import com.example.chatwebrtc.dialog.ChangeCallTypeDialog;
 import com.example.chatwebrtc.dialog.HangUpConfirmDialog;
+import com.example.chatwebrtc.utils.ActionConfigs;
 import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.utils.Utils;
 import com.example.chatwebrtc.webrtc.ProxyVideoSink;
@@ -109,6 +117,11 @@ public class CallChatWindow extends BaseFloatingWindow {
      */
     private Chronometer timer;
 
+    /**
+     * web发送的涂鸦图片
+     */
+    private ImageView ivImage;
+
     private boolean enableMic = true;
 
     /**
@@ -144,6 +157,7 @@ public class CallChatWindow extends BaseFloatingWindow {
         tvInfo = mRootView.findViewById(R.id.tv_info);
         timer = mRootView.findViewById(R.id.timer);
         rlNoCamera = mRootView.findViewById(R.id.rl_no_camera);
+        ivImage = mRootView.findViewById(R.id.iv_image);
 
         rootEglBase = EglBase.create();
 
@@ -415,12 +429,89 @@ public class CallChatWindow extends BaseFloatingWindow {
      * @param action
      */
     public void showAction(String action) {
-        if ("OPEN_VIDEO".equals(action)) {
-            //摄像头打开
-            rlNoCamera.setVisibility(View.GONE);
-        } else {
-            //摄像头关闭
-            rlNoCamera.setVisibility(View.VISIBLE);
+        switch (action) {
+            case ActionConfigs.ACTION_OPEN_VIDEO:
+                //摄像头打开
+                rlNoCamera.setVisibility(View.GONE);
+                break;
+            case ActionConfigs.ACTION_CLOSE_VIDEO:
+                //摄像头关闭
+                rlNoCamera.setVisibility(View.VISIBLE);
+                break;
+            case ActionConfigs.ACTION_OPEN_DRAW:
+                //开启涂鸦
+                Toast.makeText(mContext, "开启涂鸦", Toast.LENGTH_LONG).show();
+                break;
+            case ActionConfigs.ACTION_CLOSE_DRAW:
+                //关闭涂鸦
+                Toast.makeText(mContext, "关闭涂鸦", Toast.LENGTH_LONG).show();
+                // 清空图片
+                ivImage.setImageBitmap(null);
+                break;
+            case ActionConfigs.ACTION_OPEN_CONTROLLER:
+                //开启远程控制
+                Toast.makeText(mContext, "开启远程控制", Toast.LENGTH_LONG).show();
+                break;
+            case ActionConfigs.ACTION_CLOSE_CONTROLLER:
+                //关闭远程控制
+                Toast.makeText(mContext, "关闭远程控制", Toast.LENGTH_LONG).show();
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    /**
+     * 展示web发送的图片
+     * @param imageStr
+     */
+    public void showImage(String imageStr) {
+        Log.e(TAG, "showImage imageStr = " + imageStr);
+        String base64Image = imageStr.split(",")[1];
+        byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        ivImage.setImageBitmap(bitmap);
+    }
+
+    public void showPoint(MouseEventBean mouseEventBean) {
+        String mouseEventType = mouseEventBean.getType();
+
+        //远程屏幕宽高
+        int screenwidth = mouseEventBean.getScreenSize().getWidth();
+        int screenheight = mouseEventBean.getScreenSize().getHeight();
+        //本地设备宽高
+        int screenRealWidth = BRScreenManagerUtils.getScreenRealWidth(mContext);
+        int screenRealHeight = BRScreenManagerUtils.getScreenRealHeight(mContext);
+        int statusBarHeight = BRScreenManagerUtils.getStatusBarHeight(mContext);
+        //获取pc端显示的宽度
+        int pcWidth = (int)(((double)screenheight / (double)screenRealHeight)*screenRealWidth);
+
+        //pc居中原点屏幕开始位置
+        int startWidth=(screenwidth-pcWidth)/2;
+
+        int dx = mouseEventBean.getStartPoint().getPointX();
+        int dy = mouseEventBean.getStartPoint().getPointY();
+
+        if ("CLICK".equals(mouseEventType)) {
+            //点击
+            int x=((dx-startWidth) * screenRealWidth) / (screenwidth-(startWidth*2));
+            //云终端获取状态栏数据不对直接写死1920
+            // int y=dy1 * (screenRealHeight + statusBarHeight) / screenheight;
+            int y=dy * (1920) / screenheight;
+
+            AccessibilityOperator.getInstance().dispatchGestureClick(x, y);
+        } else if ("DRAG".equals(mouseEventType)) {
+            //滑动 有结束点坐标
+            int dx_end = mouseEventBean.getEndPoint().getPointX();
+            int dy_end = mouseEventBean.getEndPoint().getPointY();
+
+            int x1=((dx-startWidth) * screenRealWidth) / (screenwidth-(startWidth*2));
+            int y1=dy * (screenRealHeight + statusBarHeight) / screenheight;
+
+            int x2=((dx_end-startWidth) * screenRealWidth) / (screenwidth-(startWidth*2));
+            int y2=dy_end * (screenRealHeight + statusBarHeight) / screenheight;
+            AccessibilityOperator.getInstance().dispatchGestureSlide(x1, y1, x2, y2);
         }
     }
 

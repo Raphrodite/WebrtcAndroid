@@ -1,5 +1,7 @@
 package com.example.chatwebrtc;
 
+import com.example.chatwebrtc.bean.MouseEventBean;
+
 /**
  * * Copyright * 圣通电力
  *
@@ -62,4 +64,16 @@ public interface IConnectEvent {
      * @param action
      */
     void onAction(String action);
+
+    /**
+     * 发送图片
+     * @param imageStr
+     */
+    void onSendImage(String imageStr);
+
+    /**
+     * 远程控制 发送坐标
+     * @param mouseEventBean
+     */
+    void onSendPoint(MouseEventBean mouseEventBean);
 }

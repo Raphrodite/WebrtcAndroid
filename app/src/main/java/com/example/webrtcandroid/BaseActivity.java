@@ -67,7 +67,7 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onConfirm() {
                 Map<String, Object> map = new HashMap<>();
-                map.put("deviceId", "123");
+                map.put("deviceId", "789");
                 //JSONObject
                 JSONObject object = new JSONObject(map);
                 //转化为json字符串
@@ -135,6 +135,9 @@ public class BaseActivity extends AppCompatActivity {
             Intent captureIntent = data;
             //创建VideoCapture
             createVideoCapture(captureIntent);
+        } else {
+            //展示客服悬浮窗
+            RobotWindow.getInstance(this).show(0, 0, null);
         }
     }
 

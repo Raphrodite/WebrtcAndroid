@@ -1,5 +1,7 @@
 package com.example.chatwebrtc.webrtc;
 
+import com.example.chatwebrtc.bean.MouseEventBean;
+
 import org.webrtc.IceCandidate;
 
 import java.util.ArrayList;
@@ -82,7 +84,19 @@ public interface IWebRtcEvents {
     void onChangeCancel();
 
     /**
-     * 自定义消息 摄像头的切换
+     * 自定义消息 摄像头的切换 开启或者关闭涂鸦
      */
     void onAction(String action);
+
+    /**
+     * 涂鸦 发送图片
+     * @param imageStr
+     */
+    void onSendImage(String imageStr);
+
+    /**
+     * 远程控制 发送坐标
+     * @param mouseEventBean
+     */
+    void onSendPoint(MouseEventBean mouseEventBean);
 }

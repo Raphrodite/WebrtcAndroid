@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.chatwebrtc.IConnectEvent;
 import com.example.chatwebrtc.bean.LoginUseBean;
+import com.example.chatwebrtc.bean.MouseEventBean;
 import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.view.CallChatWindow;
 
@@ -21,6 +22,11 @@ import com.example.chatwebrtc.view.CallChatWindow;
  * @CreateDate: 2023/2/14
  */
 public class WebRtcUtil {
+
+    /**
+     * Log tag
+     */
+    private static final String TAG = "WebRtcUtil_zrzr";
 
     public static String TOKEN = "" ;
 
@@ -46,7 +52,7 @@ public class WebRtcUtil {
                 // 添加其他IceServer对象
                 new MyIceServer(bean.getStunConfig().getAddress(), bean.getStunConfig().getUsername(), bean.getStunConfig().getPassword())
         };
-        Log.e("zrzr", "token = " + TOKEN + ", address = " + bean.getStunConfig().getAddress() + ", username = " +  bean.getStunConfig().getUsername() +
+        Log.e(TAG, "token = " + TOKEN + ", address = " + bean.getStunConfig().getAddress() + ", username = " +  bean.getStunConfig().getUsername() +
                 ", password = " + bean.getStunConfig().getPassword());
         //初始化
         WebRtcManager.getInstance().init(webSocketUrl, iceServers, new IConnectEvent() {
@@ -102,8 +108,20 @@ public class WebRtcUtil {
 
             @Override
             public void onAction(String action) {
-                //自定义消息 摄像头的切换
+                //自定义消息
                 CallChatWindow.getInstance(activity).showAction(action);
+            }
+
+            @Override
+            public void onSendImage(String imageStr) {
+                //发送图片展示
+                CallChatWindow.getInstance(activity).showImage(imageStr);
+            }
+
+            @Override
+            public void onSendPoint(MouseEventBean mouseEventBean) {
+                //远程控制 发送坐标
+                CallChatWindow.getInstance(activity).showPoint(mouseEventBean);
             }
         });
         //建立连接

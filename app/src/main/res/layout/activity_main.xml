@@ -35,16 +35,39 @@
             android:orientation="vertical"
             >
 
-            <TextView
-                android:id="@+id/tv_event"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="10sp"
-                android:text="aaa"
-                android:textColor="#ff0000"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <TextView
+                    android:id="@+id/tv_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:text="aaa"
+                    android:textColor="#ff0000"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="#ff0000"
+                    />
+
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="#00ff00"
+                    android:layout_marginTop="300dp"
+                    android:layout_alignParentRight="true"
+                    />
+
+            </RelativeLayout>
 
         </LinearLayout>
 

@@ -1,10 +1,16 @@
 package com.example.chatwebrtc.view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.chatwebrtc.R;
+import com.example.chatwebrtc.control.AccessibilityOpenHelperActivity;
+import com.example.chatwebrtc.control.AccessibilityUtil;
+import com.example.chatwebrtc.control.SimulatedClickService;
+import com.example.chatwebrtc.utils.CommonUtil;
 
 /**
  * * Copyright * 圣通电力
@@ -49,9 +55,19 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
         tvConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hide(null);
-                if(onConfirmListener != null) {
-                    onConfirmListener.onConfirm();
+
+                CommonUtil.openServicePermissonRoot(mContext, SimulatedClickService.class);
+                if (!AccessibilityUtil.isAccessibilitySettingsOn(mContext)) {
+                    Log.e("zrzr", "isAccessibilitySettingsOn");
+                    Intent intent = new Intent(mContext,  AccessibilityOpenHelperActivity.class);
+                    intent.putExtra("action", "action_start_accessibility_setting");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                } else {
+                    hide(null);
+                    if (onConfirmListener != null) {
+                        onConfirmListener.onConfirm();
+                    }
                 }
             }
         });

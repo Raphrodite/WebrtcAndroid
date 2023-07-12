@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.chatwebrtc.IConnectEvent;
 import com.example.chatwebrtc.IViewCallback;
+import com.example.chatwebrtc.bean.MouseEventBean;
 import com.example.chatwebrtc.peer.PeerConnectionHelper;
 import com.example.chatwebrtc.websocket.IWebSocket;
 import com.example.chatwebrtc.websocket.WebSocketManager;
@@ -319,11 +320,33 @@ public class WebRtcManager implements IWebRtcEvents {
 
     @Override
     public void onAction(String action) {
-        //自定义消息 摄像头的切换
+        //自定义消息
         handler.post(() -> {
             if (connectEvent != null) {
                 Log.e(TAG, "onAction");
                 connectEvent.onAction(action);
+            }
+        });
+    }
+
+    @Override
+    public void onSendImage(String imageStr) {
+        //发送图片
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onSendImage");
+                connectEvent.onSendImage(imageStr);
+            }
+        });
+    }
+
+    @Override
+    public void onSendPoint(MouseEventBean mouseEventBean) {
+        //远程控制 发送坐标
+        handler.post(() -> {
+            if (connectEvent != null) {
+                Log.e(TAG, "onSendPoint");
+                connectEvent.onSendPoint(mouseEventBean);
             }
         });
     }

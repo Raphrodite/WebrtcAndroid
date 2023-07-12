@@ -637,7 +637,7 @@ public class PeerConnectionHelper {
         @Override
         public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
             Log.e(TAG, "onConnectionChange: " + newState.toString());
-            if (newState.equals(PeerConnection.PeerConnectionState.DISCONNECTED) || newState.equals(PeerConnection.PeerConnectionState.FAILED)) {
+            if (newState.equals(PeerConnection.PeerConnectionState.DISCONNECTED)) {
                 //说明Peer通道关闭 通话结束
                 if (viewCallback != null) {
                     viewCallback.onClose();
