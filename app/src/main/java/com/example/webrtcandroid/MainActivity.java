@@ -104,6 +104,14 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        binding.tv3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("zrzr", "点击了蓝色");
+                Toast.makeText(MainActivity.this, "点击了蓝色", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         getScreen();
         Log.e("zrzr", getScreenInfo(this));
     }

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="210dp"
-        android:layout_height="270dp"
+        android:layout_width="250dp"
+        android:layout_height="320dp"
         android:background="@color/color_000000"
         >
 
@@ -117,8 +117,8 @@
 
         <ImageView
             android:id="@+id/iv_image"
-            android:layout_width="120dp"
-            android:layout_height="170dp"
+            android:layout_width="140dp"
+            android:layout_height="190dp"
             android:layout_alignParentRight="true"
             />
 

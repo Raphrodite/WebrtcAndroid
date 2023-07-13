@@ -74,7 +74,7 @@ public class PeerConnectionHelper {
      */
     public static final int VIDEO_RESOLUTION_WIDTH = 720;
     public static final int VIDEO_RESOLUTION_HEIGHT = 1080;
-    public static final int FPS = 30;
+    public static final int FPS = 10;
     public static final String VIDEO_CODEC_H264 = "H264";
     public static final String VIDEO_TRACK_ID = "ARDAMSv0";
     public static final String AUDIO_TRACK_ID = "ARDAMSa0";
