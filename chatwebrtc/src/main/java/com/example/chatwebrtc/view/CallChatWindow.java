@@ -447,6 +447,7 @@ public class CallChatWindow extends BaseFloatingWindow {
                 Toast.makeText(mContext, "关闭涂鸦", Toast.LENGTH_LONG).show();
                 // 清空图片
                 ivImage.setImageBitmap(null);
+                ivImage.setVisibility(View.GONE);
                 break;
             case ActionConfigs.ACTION_OPEN_CONTROLLER:
                 //开启远程控制
@@ -472,6 +473,7 @@ public class CallChatWindow extends BaseFloatingWindow {
         byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         ivImage.setImageBitmap(bitmap);
+        ivImage.setVisibility(View.VISIBLE);
     }
 
     public void showPoint(MouseEventBean mouseEventBean) {
