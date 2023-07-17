@@ -24,7 +24,6 @@ import com.example.chatwebrtc.bean.MouseEventBean;
 import com.example.chatwebrtc.control.AccessibilityOperator;
 import com.example.chatwebrtc.control.BRScreenManagerUtils;
 import com.example.chatwebrtc.dialog.ChangeCallTypeDialog;
-import com.example.chatwebrtc.dialog.HangUpConfirmDialog;
 import com.example.chatwebrtc.utils.ActionConfigs;
 import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.utils.Utils;
@@ -246,18 +245,10 @@ public class CallChatWindow extends BaseFloatingWindow {
         tvHangUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //挂断弹窗
-                HangUpConfirmDialog confirmDialog = new HangUpConfirmDialog(mActivity);
-                confirmDialog.showDialog(confirmDialog);
-                confirmDialog.setOnConfirmListener(new HangUpConfirmDialog.OnConfirmListener() {
-                    @Override
-                    public void onConfirm() {
-                        //断开连接
-                        disconnect();
-                    }
-                });
+                HangUpWindow.getInstance(mContext).showMatch(null);
             }
         });
+
         //静音 监听
         tvMute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -520,7 +511,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     /**
      * 断开连接
      */
-    private void disconnect() {
+    public void disconnect() {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
