@@ -67,12 +67,12 @@ public class CallChatWindow extends BaseFloatingWindow {
     /**
      * 控件，继承于SurfaceView的渲染View，提供了OpenGL渲染图像数据的功能，加载本地和远端
      */
-    private SurfaceViewRenderer local_view, remote_view;
+    private SurfaceViewRenderer local_view, remote_view, draw_view;
 
     /**
      * ProxyVideoSink 本地、远端
      */
-    private ProxyVideoSink localRender, remoteRender;
+    private ProxyVideoSink localRender, remoteRender, drawRender;
 
     /**
      * 提供EGL的渲染上下文及EGL的版本兼容
@@ -149,6 +149,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     protected void initView(View mRootView) {
         local_view = mRootView.findViewById(R.id.local_view_render);
         remote_view = mRootView.findViewById(R.id.remote_view_render);
+        draw_view = mRootView.findViewById(R.id.draw_render);
         tvHangUp = mRootView.findViewById(R.id.tv_hang_up);
         tvMute = mRootView.findViewById(R.id.tv_mute);
         rlCallStatus = mRootView.findViewById(R.id.rl_call_status);
@@ -171,6 +172,12 @@ public class CallChatWindow extends BaseFloatingWindow {
         remote_view.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_BALANCED);
         remote_view.setMirror(true);
         remoteRender = new ProxyVideoSink();
+        //画笔掩盖图像 初始化
+        draw_view.init(rootEglBase.getEglBaseContext(), null);
+        draw_view.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FIT);
+        draw_view.setZOrderMediaOverlay(true);
+        draw_view.setMirror(true);
+        drawRender = new ProxyVideoSink();
 
 //        setSwappedFeeds(false);
 
@@ -218,6 +225,15 @@ public class CallChatWindow extends BaseFloatingWindow {
                         }
                     });
                     stream.videoTracks.get(0).addSink(remoteRender);
+
+                    stream.videoTracks.get(0).addSink(drawRender);
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            draw_view.setVisibility(View.GONE);
+                        }
+                    });
+
                     stream.videoTracks.get(0).setEnabled(true);
                 }
                 if (videoEnable) {
@@ -237,6 +253,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     private void setSwappedFeeds(boolean isSwappedFeeds) {
         localRender.setTarget(isSwappedFeeds ? remote_view : local_view);
         remoteRender.setTarget(isSwappedFeeds ? local_view : remote_view);
+        drawRender.setTarget(isSwappedFeeds ? remote_view : draw_view);
     }
 
     @Override
@@ -292,6 +309,9 @@ public class CallChatWindow extends BaseFloatingWindow {
         rlCallStatus.setVisibility(View.VISIBLE);
         tvInfo.setVisibility(View.GONE);
         timer.setVisibility(View.GONE);
+        ivImage.setImageBitmap(null);
+        ivImage.setVisibility(View.GONE);
+        draw_view.setVisibility(View.GONE);
         switch (status) {
             case CallConfigs.CALL_STATUS_ING:
                 //呼叫中
@@ -439,6 +459,7 @@ public class CallChatWindow extends BaseFloatingWindow {
                 // 清空图片
                 ivImage.setImageBitmap(null);
                 ivImage.setVisibility(View.GONE);
+                draw_view.setVisibility(View.GONE);
                 break;
             case ActionConfigs.ACTION_OPEN_CONTROLLER:
                 //开启远程控制
@@ -465,6 +486,7 @@ public class CallChatWindow extends BaseFloatingWindow {
         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         ivImage.setImageBitmap(bitmap);
         ivImage.setVisibility(View.VISIBLE);
+        draw_view.setVisibility(View.VISIBLE);
     }
 
     public void showPoint(MouseEventBean mouseEventBean) {
@@ -527,6 +549,10 @@ public class CallChatWindow extends BaseFloatingWindow {
             remoteRender.setTarget(null);
             remoteRender = null;
         }
+        if (drawRender != null) {
+            drawRender.setTarget(null);
+            drawRender = null;
+        }
 
         if (local_view != null) {
             local_view.release();
@@ -535,6 +561,10 @@ public class CallChatWindow extends BaseFloatingWindow {
         if (remote_view != null) {
             remote_view.release();
             remote_view = null;
+        }
+        if (draw_view != null) {
+            draw_view.release();
+            draw_view = null;
         }
 
         //计时器结束
