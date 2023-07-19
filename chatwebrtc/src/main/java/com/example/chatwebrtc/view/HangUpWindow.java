@@ -13,7 +13,7 @@ import com.example.chatwebrtc.R;
  * @ProjectName: WebrtcAndroid
  * @Package: com.example.chatwebrtc.view
  * @ClassName:
- * @Description:
+ * @Description: 是否挂断 悬浮窗
  * @Author: Raphrodite
  * @CreateDate: 2023/7/17
  */
@@ -53,8 +53,6 @@ public class HangUpWindow extends BaseFloatingWindow{
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 hide(null);
             }
         });

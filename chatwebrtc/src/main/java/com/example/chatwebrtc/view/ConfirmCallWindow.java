@@ -2,9 +2,12 @@ package com.example.chatwebrtc.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.chatwebrtc.R;
 import com.example.chatwebrtc.control.AccessibilityOpenHelperActivity;
@@ -28,6 +31,8 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
 
     private TextView tvCancel, tvConfirm;
 
+    private EditText etId;
+
     public static ConfirmCallWindow getInstance(Context context) {
         if (instance == null) {
             instance = new ConfirmCallWindow(context);
@@ -48,6 +53,7 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
     protected void initView(View mRootView) {
         tvCancel = mRootView.findViewById(R.id.tv_cancel);
         tvConfirm = mRootView.findViewById(R.id.tv_confirm);
+        etId = mRootView.findViewById(R.id.et_id);
     }
 
     @Override
@@ -55,6 +61,13 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
         tvConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(TextUtils.isEmpty(etId.getText().toString())) {
+                    Toast.makeText(mContext, "请输入设备id", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String deviceId = etId.getText().toString();
+                Log.e("zrzr", "deviceId = " + deviceId);
 
                 CommonUtil.openServicePermissonRoot(mContext, SimulatedClickService.class);
                 if (!AccessibilityUtil.isAccessibilitySettingsOn(mContext)) {
@@ -66,7 +79,7 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
                 } else {
                     hide(null);
                     if (onConfirmListener != null) {
-                        onConfirmListener.onConfirm();
+                        onConfirmListener.onConfirm(deviceId);
                     }
                 }
             }
@@ -91,7 +104,7 @@ public class ConfirmCallWindow extends BaseFloatingWindow {
     }
 
     public interface OnConfirmListener {
-        void onConfirm();
+        void onConfirm(String deviceId);
     }
 
     private OnConfirmListener onConfirmListener;

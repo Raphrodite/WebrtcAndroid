@@ -23,7 +23,6 @@ import com.example.chatwebrtc.R;
 import com.example.chatwebrtc.bean.MouseEventBean;
 import com.example.chatwebrtc.control.AccessibilityOperator;
 import com.example.chatwebrtc.control.BRScreenManagerUtils;
-import com.example.chatwebrtc.dialog.ChangeCallTypeDialog;
 import com.example.chatwebrtc.utils.ActionConfigs;
 import com.example.chatwebrtc.utils.CallConfigs;
 import com.example.chatwebrtc.utils.Utils;
@@ -122,11 +121,6 @@ public class CallChatWindow extends BaseFloatingWindow {
     private ImageView ivImage;
 
     private boolean enableMic = true;
-
-    /**
-     * 切换通话方式弹窗
-     */
-    private ChangeCallTypeDialog changeCallTypeDialog;
 
     public static CallChatWindow getInstance(Context context) {
         if (instance == null) {
@@ -409,30 +403,23 @@ public class CallChatWindow extends BaseFloatingWindow {
      * @param afterCallType 变更前通话类型 AUDIO、VIDEO
      */
     public void showChangeCallType(String beforeCallType, String afterCallType) {
-        changeCallTypeDialog = new ChangeCallTypeDialog(mActivity);
-        changeCallTypeDialog.showDialog(changeCallTypeDialog, beforeCallType, afterCallType);
-        changeCallTypeDialog.setOnConfirmListener(new ChangeCallTypeDialog.OnConfirmListener() {
-            @Override
-            public void onRefuse() {
-                //拒绝
-                manager.sendChangeCallTypeAck("REFUSE");
-            }
+        ChangeCallTypeWindow.getInstance(mContext).showMatch(null);
+        ChangeCallTypeWindow.getInstance(mContext).showChangeCallTypeText(beforeCallType, afterCallType);
+    }
 
-            @Override
-            public void onConfirm() {
-                //同意
-                manager.sendChangeCallTypeAck("AGREE");
-            }
-        });
+    /**
+     * 切换通话方式结果
+     * @param result REFUSE-拒绝 AGREE-同意
+     */
+    public void changeCallTypeResult(String result) {
+        manager.sendChangeCallTypeAck(result);
     }
 
     /**
      * 切换通话方式取消
      */
     public void showChangeCallTypeCancal() {
-        if (changeCallTypeDialog != null && changeCallTypeDialog.isShowing()) {
-            changeCallTypeDialog.dismiss();
-        }
+        ChangeCallTypeWindow.getInstance(mContext).hide(null);
     }
 
     /**

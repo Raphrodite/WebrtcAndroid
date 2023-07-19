@@ -65,9 +65,9 @@ public class BaseActivity extends AppCompatActivity {
     private void init() {
         ConfirmCallWindow.getInstance(BaseActivity.this).setOnConfirmListener(new ConfirmCallWindow.OnConfirmListener() {
             @Override
-            public void onConfirm() {
+            public void onConfirm(String deviceId) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("deviceId", "789");
+                map.put("deviceId", deviceId);
                 //JSONObject
                 JSONObject object = new JSONObject(map);
                 //转化为json字符串
