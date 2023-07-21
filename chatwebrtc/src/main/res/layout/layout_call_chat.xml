@@ -4,18 +4,16 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="250dp"
-        android:layout_height="320dp"
-        android:background="@color/color_000000"
+        android:layout_width="@dimen/dp_140"
+        android:layout_height="@dimen/dp_180"
+        android:background="@color/color_656565"
         >
 
         <org.webrtc.SurfaceViewRenderer
             android:id="@+id/local_view_render"
-            android:layout_width="100dp"
-            android:layout_height="140dp"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
             />
 
         <org.webrtc.SurfaceViewRenderer
@@ -25,40 +23,76 @@
             />
 
         <RelativeLayout
-            android:id="@+id/rl_call_status"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#00ff00"
-            >
-
-            <TextView
-                android:id="@+id/tv_call_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="呼叫中..."
-                android:textColor="@color/color_ffffff"
-                android:textSize="20sp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
             android:visibility="gone"
             android:id="@+id/rl_no_camera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ff0000"
+            android:background="@color/color_656565"
             >
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="客服摄像头暂时无法使用..."
-                android:textSize="15sp"
-                android:textColor="@color/color_ffffff"
+                android:orientation="vertical"
                 android:layout_centerInParent="true"
-                android:gravity="center"
-                />
+                android:gravity="center_horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/iv_robot_1"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:src="@drawable/icon_robot_invoce_call"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="客服摄像头暂时无法使用..."
+                    android:textSize="@dimen/sp_10"
+                    android:textColor="@color/color_ffffff"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/rl_call_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_656565"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                android:gravity="center_horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/iv_robot_2"
+                    android:layout_width="@dimen/dp_48"
+                    android:layout_height="@dimen/dp_48"
+                    android:src="@drawable/icon_robot_invoce_call"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_call_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="呼叫中..."
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="@dimen/sp_10"
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -73,8 +107,8 @@
         <org.webrtc.SurfaceViewRenderer
             android:visibility="gone"
             android:id="@+id/draw_render"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
             android:layout_alignParentEnd="true"
             />
 
@@ -84,32 +118,26 @@
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_10"
             >
 
             <!--静音-->
-            <TextView
-                android:id="@+id/tv_mute"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:drawableTop="@drawable/webrtc_btn_voice_mute"
-                android:gravity="center_horizontal"
-                android:text="静音"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+            <ImageView
+                android:id="@+id/iv_mute"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/webrtc_btn_voice_mute"
+                android:scaleType="fitXY"
+                />
 
             <!--挂断-->
-            <TextView
-                android:id="@+id/tv_hang_up"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:drawableTop="@drawable/webrtc_cancel"
-                android:gravity="center_horizontal"
-                android:text="挂断"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_marginLeft="30dp"
+            <ImageView
+                android:id="@+id/iv_hang_up"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/webrtc_cancel"
+                android:scaleType="fitXY"
+                android:layout_marginLeft="@dimen/dp_24"
                 />
 
         </LinearLayout>
@@ -119,7 +147,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="客服姓名XXXX 工号XXXXX"
-            android:textColor="#ff0000"
+            android:textColor="@color/color_0000ff"
+            android:textSize="@dimen/sp_10"
             />
         
         <Chronometer
@@ -128,7 +157,8 @@
             android:layout_height="wrap_content"
             android:format="%s"
             android:id="@+id/timer"
-            android:textColor="#ff0000"
+            android:textColor="@color/color_0000ff"
+            android:textSize="@dimen/sp_10"
             />
 
     </RelativeLayout>

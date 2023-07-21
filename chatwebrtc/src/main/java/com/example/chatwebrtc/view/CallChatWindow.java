@@ -93,7 +93,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     /**
      * 挂断按钮;静音按钮
      */
-    private TextView tvHangUp, tvMute;
+    private ImageView ivHangUp, ivMute;
 
     /**
      * 呼叫状态 区域; 没有客服摄像头 区域
@@ -144,8 +144,8 @@ public class CallChatWindow extends BaseFloatingWindow {
         local_view = mRootView.findViewById(R.id.local_view_render);
         remote_view = mRootView.findViewById(R.id.remote_view_render);
         draw_view = mRootView.findViewById(R.id.draw_render);
-        tvHangUp = mRootView.findViewById(R.id.tv_hang_up);
-        tvMute = mRootView.findViewById(R.id.tv_mute);
+        ivHangUp = mRootView.findViewById(R.id.iv_hang_up);
+        ivMute = mRootView.findViewById(R.id.iv_mute);
         rlCallStatus = mRootView.findViewById(R.id.rl_call_status);
         tvCallStatus = mRootView.findViewById(R.id.tv_call_status);
         tvInfo = mRootView.findViewById(R.id.tv_info);
@@ -253,7 +253,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     @Override
     protected void onBindListener() {
         //挂断 监听
-        tvHangUp.setOnClickListener(new View.OnClickListener() {
+        ivHangUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 HangUpWindow.getInstance(mContext).showMatch(null);
@@ -261,22 +261,24 @@ public class CallChatWindow extends BaseFloatingWindow {
         });
 
         //静音 监听
-        tvMute.setOnClickListener(new View.OnClickListener() {
+        ivMute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 enableMic = !enableMic;
                 if (enableMic) {
-                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute_default);
-                    if (drawable != null) {
-                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
-                    }
-                    tvMute.setCompoundDrawables(null, drawable, null, null);
+                    ivMute.setImageResource(R.drawable.webrtc_mute_default);
+//                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute_default);
+//                    if (drawable != null) {
+//                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
+//                    }
+//                    ivMute.setCompoundDrawables(null, drawable, null, null);
                 } else {
-                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute);
-                    if (drawable != null) {
-                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
-                    }
-                    tvMute.setCompoundDrawables(null, drawable, null, null);
+                    ivMute.setImageResource(R.drawable.webrtc_mute);
+//                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute);
+//                    if (drawable != null) {
+//                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
+//                    }
+//                    ivMute.setCompoundDrawables(null, drawable, null, null);
                 }
                 manager.toggleMute(enableMic);
             }

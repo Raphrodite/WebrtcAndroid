@@ -1,0 +1,49 @@
+<resources>
+
+    <dimen name="dp_1">3dp</dimen>
+    <dimen name="dp_2">6px</dimen>
+    <dimen name="dp_4">12px</dimen>
+    <dimen name="dp_5">15px</dimen>
+    <dimen name="dp_8">24px</dimen>
+    <dimen name="dp_10">30px</dimen>
+    <dimen name="dp_12">36px</dimen>
+    <dimen name="dp_15">45px</dimen>
+    <dimen name="dp_16">48px</dimen>
+    <dimen name="dp_20">60px</dimen>
+    <dimen name="dp_24">72px</dimen>
+    <dimen name="dp_32">96px</dimen>
+    <dimen name="dp_36">108px</dimen>
+    <dimen name="dp_40">120px</dimen>
+    <dimen name="dp_42">126px</dimen>
+    <dimen name="dp_48">144px</dimen>
+    <dimen name="dp_54">162px</dimen>
+    <dimen name="dp_56">168px</dimen>
+    <dimen name="dp_64">192px</dimen>
+    <dimen name="dp_66">198px</dimen>
+    <dimen name="dp_72">216px</dimen>
+    <dimen name="dp_77">231px</dimen>
+    <dimen name="dp_80">240px</dimen>
+    <dimen name="dp_82">246px</dimen>
+    <dimen name="dp_100">300px</dimen>
+    <dimen name="dp_120">360px</dimen>
+    <dimen name="dp_140">420px</dimen>
+    <dimen name="dp_150">450px</dimen>
+    <dimen name="dp_180">540px</dimen>
+    <dimen name="dp_300">900px</dimen>
+    <!--drawablePadding-->
+    <dimen name="drawable_padding_5">15px</dimen>
+    <dimen name="drawable_padding_8">24px</dimen>
+    <dimen name="drawable_padding_10">30px</dimen>
+    <dimen name="drawable_padding_16">48px</dimen>
+
+    <!--textSize-->
+    <dimen name="sp_10">30px</dimen>
+    <dimen name="sp_12">36px</dimen>
+    <dimen name="sp_14">42px</dimen>
+    <dimen name="sp_16">48px</dimen>
+    <dimen name="sp_18">54px</dimen>
+    <dimen name="sp_20">60px</dimen>
+    <dimen name="sp_22">66px</dimen>
+    <dimen name="sp_24">72px</dimen>
+    <dimen name="dp_89">266px</dimen>
+</resources>
