@@ -107,8 +107,8 @@
         <org.webrtc.SurfaceViewRenderer
             android:visibility="gone"
             android:id="@+id/draw_render"
-            android:layout_width="@dimen/dp_80"
-            android:layout_height="@dimen/dp_80"
+            android:layout_width="@dimen/dp_58"
+            android:layout_height="@dimen/dp_51"
             android:layout_alignParentEnd="true"
             />
 

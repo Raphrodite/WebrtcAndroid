@@ -16,8 +16,12 @@
     <dimen name="dp_40">120px</dimen>
     <dimen name="dp_42">126px</dimen>
     <dimen name="dp_48">144px</dimen>
+    <dimen name="dp_50">150px</dimen>
+    <dimen name="dp_51">153px</dimen>
+    <dimen name="dp_52">156px</dimen>
     <dimen name="dp_54">162px</dimen>
     <dimen name="dp_56">168px</dimen>
+    <dimen name="dp_58">174px</dimen>
     <dimen name="dp_64">192px</dimen>
     <dimen name="dp_66">198px</dimen>
     <dimen name="dp_72">216px</dimen>
