@@ -152,6 +152,16 @@ public class WebRtcManager implements IWebRtcEvents {
     }
 
     /**
+     * 发送action 涂鸦是否开启 远程控制是否开启
+     * @param action
+     */
+    public void sendCustomAction(String action) {
+        if (webSocket != null) {
+            webSocket.sendCustomAction(action);
+        }
+    }
+
+    /**
      * 翻转摄像头
      */
     public void switchCamera() {

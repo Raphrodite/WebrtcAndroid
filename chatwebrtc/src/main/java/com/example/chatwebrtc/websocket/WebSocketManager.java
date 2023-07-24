@@ -1,5 +1,6 @@
 package com.example.chatwebrtc.websocket;
 
+import static com.example.chatwebrtc.websocket.WebSocketData.getActionByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getCallMapByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getChangeCallTypeAckByToken;
 import static com.example.chatwebrtc.websocket.WebSocketData.getHangUpByToken;
@@ -280,6 +281,17 @@ public class WebSocketManager extends WebSocketListener implements IWebSocket {
     public void sendChangeCallTypeAck(String ack) {
         Log.e(TAG, "切换通话方式应答---");
         String message = getChangeCallTypeAckByToken(callFromId, ack);
+        send(message);
+    }
+
+    /**
+     * 发送action 涂鸦是否开启 远程控制是否开启
+     * @param action
+     */
+    @Override
+    public void sendCustomAction(String action) {
+        Log.e(TAG, "发送action---" + action);
+        String message = getActionByToken(callFromId, action);
         send(message);
     }
 

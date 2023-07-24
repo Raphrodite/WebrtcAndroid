@@ -41,6 +41,7 @@
     <dimen name="drawable_padding_16">48px</dimen>
 
     <!--textSize-->
+    <dimen name="sp_6">18px</dimen>
     <dimen name="sp_10">30px</dimen>
     <dimen name="sp_12">36px</dimen>
     <dimen name="sp_14">42px</dimen>

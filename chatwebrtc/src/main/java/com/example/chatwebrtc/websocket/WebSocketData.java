@@ -158,4 +158,19 @@ public class WebSocketData {
         return mapToString(map);
     }
 
+    /**
+     * 发送action 涂鸦是否开启 远程控制是否开启 报文
+     * @param toId 接收方id
+     * @param action ActionConfigs
+     * @return
+     */
+    public static String getActionByToken(String toId, String action) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", "CUSTOM");
+        map.put("fromId", TOKEN);
+        map.put("toId", toId);
+        map.put("action", action);
+        return mapToString(map);
+    }
+
 }

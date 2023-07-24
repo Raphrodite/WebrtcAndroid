@@ -42,6 +42,7 @@
     <dimen name="drawable_padding_16">16dp</dimen>
 
     <!--textSize-->
+    <dimen name="sp_6">6sp</dimen>
     <dimen name="sp_10">10sp</dimen>
     <dimen name="sp_12">12sp</dimen>
     <dimen name="sp_14">14sp</dimen>

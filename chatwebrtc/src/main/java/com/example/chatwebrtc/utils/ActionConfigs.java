@@ -12,6 +12,8 @@ package com.example.chatwebrtc.utils;
  */
 public class ActionConfigs {
 
+    // ===================================WebSocket 接收的ACTION start=======================================
+
     /**
      * 打开摄像头
      */
@@ -51,4 +53,70 @@ public class ActionConfigs {
      * 远程控制发送坐标
      */
     public static final String ACTION_SEND_POINT = "SEND_POINT";
+
+    /**
+     * 开启涂鸦-请求
+     */
+    public static final String ACTION_CALL_DRAW = "CALL_DRAW";
+
+    /**
+     * 涂鸦-取消请求
+     */
+    public static final String ACTION_CANCEL_DRAW_REQUEST = "CANCEL_DRAW_REQUEST";
+
+    /**
+     * 远程控制-请求
+     */
+    public static final String ACTION_CALL_CONTROLLER = "CALL_CONTROLLER";
+
+    /**
+     * 远程控制-取消请求
+     */
+    public static final String ACTION_CANCEL_CONTROLLER_REQUEST = "CANCEL_CONTROLLER_REQUEST";
+
+    /**
+     * 视频通话-视频接入-客服摄像头关闭
+     */
+    public static final String ACTION_SERVICE_VIDEO_CLOSE = "SERVICE_VIDEO_CLOSE";
+
+    /**
+     * 视频通话-视频接入-客服摄像头打开
+     */
+    public static final String ACTION_SERVICE_VIDEO_OPEN = "SERVICE_VIDEO_OPEN";
+
+    // ===================================WebSocket 接收的ACTION end=======================================
+
+    // ===================================WebSocket 发送的ACTION start=======================================
+
+    /**
+     * 切换通话方式-拒绝
+     */
+    public static final String CHANGE_CALL_TYPE_REFUSE = "REFUSE";
+
+    /**
+     * 切换通话方式-同意
+     */
+    public static final String CHANGE_CALL_TYPE_AGREE = "AGREE";
+
+    /**
+     * 涂鸦-取消
+     */
+    public static final String DRAW_CANCEL = "CANCEL_DRAW";
+
+    /**
+     * 涂鸦-同意
+     */
+    public static final String DRAW_AGREE = "AGREE_DRAW";
+
+    /**
+     * 远程控制-取消
+     */
+    public static final String CANCEL_CONTROLLER = "CANCEL_CONTROLLER";
+
+    /**
+     * 远程控制-同意
+     */
+    public static final String AGREE_CONTROLLER = "AGREE_CONTROLLER";
+
+    // ===================================WebSocket 发送的ACTION end=======================================
 }

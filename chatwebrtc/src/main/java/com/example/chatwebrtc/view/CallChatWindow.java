@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
@@ -16,8 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
 import com.example.chatwebrtc.IViewCallback;
 import com.example.chatwebrtc.R;
 import com.example.chatwebrtc.bean.MouseEventBean;
@@ -25,7 +22,6 @@ import com.example.chatwebrtc.control.AccessibilityOperator;
 import com.example.chatwebrtc.control.BRScreenManagerUtils;
 import com.example.chatwebrtc.utils.ActionConfigs;
 import com.example.chatwebrtc.utils.CallConfigs;
-import com.example.chatwebrtc.utils.Utils;
 import com.example.chatwebrtc.webrtc.ProxyVideoSink;
 import com.example.chatwebrtc.webrtc.WebRtcManager;
 
@@ -98,7 +94,7 @@ public class CallChatWindow extends BaseFloatingWindow {
     /**
      * 呼叫状态 区域; 没有客服摄像头 区域
      */
-    private RelativeLayout rlCallStatus, rlNoCamera;
+    private RelativeLayout rlCallStatus, rlNoCamera, rlNoCameraDraw;
 
     /**
      * 呼叫状态 文字
@@ -120,7 +116,20 @@ public class CallChatWindow extends BaseFloatingWindow {
      */
     private ImageView ivImage;
 
+    /**
+     * 是否静音
+     */
     private boolean enableMic = true;
+
+    /**
+     * 视频通话接入时 客服是否开启摄像头 只有刚接入时判断
+     */
+    private boolean isServiceCamera = true;
+
+    /**
+     * 当前是否时涂鸦状态
+     */
+    private boolean isCurrentDraw = false;
 
     public static CallChatWindow getInstance(Context context) {
         if (instance == null) {
@@ -151,6 +160,7 @@ public class CallChatWindow extends BaseFloatingWindow {
         tvInfo = mRootView.findViewById(R.id.tv_info);
         timer = mRootView.findViewById(R.id.timer);
         rlNoCamera = mRootView.findViewById(R.id.rl_no_camera);
+        rlNoCameraDraw = mRootView.findViewById(R.id.rl_no_camera_draw);
         ivImage = mRootView.findViewById(R.id.iv_image);
 
         rootEglBase = EglBase.create();
@@ -267,18 +277,8 @@ public class CallChatWindow extends BaseFloatingWindow {
                 enableMic = !enableMic;
                 if (enableMic) {
                     ivMute.setImageResource(R.drawable.webrtc_mute_default);
-//                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute_default);
-//                    if (drawable != null) {
-//                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
-//                    }
-//                    ivMute.setCompoundDrawables(null, drawable, null, null);
                 } else {
                     ivMute.setImageResource(R.drawable.webrtc_mute);
-//                    Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.webrtc_mute);
-//                    if (drawable != null) {
-//                        drawable.setBounds(0, 0, Utils.dip2px(mContext, 60), Utils.dip2px(mContext, 60));
-//                    }
-//                    ivMute.setCompoundDrawables(null, drawable, null, null);
                 }
                 manager.toggleMute(enableMic);
             }
@@ -308,6 +308,7 @@ public class CallChatWindow extends BaseFloatingWindow {
         ivImage.setImageBitmap(null);
         ivImage.setVisibility(View.GONE);
         draw_view.setVisibility(View.GONE);
+        rlNoCameraDraw.setVisibility(View.GONE);
         switch (status) {
             case CallConfigs.CALL_STATUS_ING:
                 //呼叫中
@@ -391,6 +392,12 @@ public class CallChatWindow extends BaseFloatingWindow {
                                 //语音接入 不显示客服摄像头
                                 if (callType.equals("AUDIO")) {
                                     rlNoCamera.setVisibility(View.VISIBLE);
+                                } else if (callType.equals("VIDEO")) {
+                                    if (isServiceCamera) {
+                                        rlNoCamera.setVisibility(View.GONE);
+                                    } else {
+                                        rlNoCamera.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }
                         });
@@ -425,6 +432,14 @@ public class CallChatWindow extends BaseFloatingWindow {
     }
 
     /**
+     * 发送action 涂鸦是否开启 远程控制是否开启
+     * @param action
+     */
+    public void sendCustomAction(String action) {
+        manager.sendCustomAction(action);
+    }
+
+    /**
      * 自定义消息 摄像头的切换
      * @param action
      */
@@ -433,22 +448,59 @@ public class CallChatWindow extends BaseFloatingWindow {
             case ActionConfigs.ACTION_OPEN_VIDEO:
                 //摄像头打开
                 rlNoCamera.setVisibility(View.GONE);
+                isServiceCamera = true;
+                if (isCurrentDraw) {
+                    rlNoCameraDraw.setVisibility(View.GONE);
+                    draw_view.setVisibility(View.VISIBLE);
+                }
                 break;
             case ActionConfigs.ACTION_CLOSE_VIDEO:
                 //摄像头关闭
                 rlNoCamera.setVisibility(View.VISIBLE);
+                isServiceCamera = false;
+                if (isCurrentDraw) {
+                    rlNoCameraDraw.setVisibility(View.VISIBLE);
+                    draw_view.setVisibility(View.GONE);
+                }
+                break;
+            case ActionConfigs.ACTION_SERVICE_VIDEO_OPEN:
+                //视频接入时-客服摄像头开启
+                isServiceCamera = true;
+                break;
+            case ActionConfigs.ACTION_SERVICE_VIDEO_CLOSE:
+                //视频接入时-客服摄像头关闭
+                isServiceCamera = false;
+                break;
+            case ActionConfigs.ACTION_CALL_DRAW:
+                //涂鸦-请求 弹窗
+                DrawWindow.getInstance(mContext).showMatch(null);
+                break;
+            case ActionConfigs.ACTION_CANCEL_DRAW_REQUEST:
+                //涂鸦-取消请求
+                DrawWindow.getInstance(mContext).hide(null);
                 break;
             case ActionConfigs.ACTION_OPEN_DRAW:
+                isCurrentDraw = true;
                 //开启涂鸦
-                Toast.makeText(mContext, "开启涂鸦", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "开启画笔", Toast.LENGTH_LONG).show();
                 break;
             case ActionConfigs.ACTION_CLOSE_DRAW:
+                isCurrentDraw = false;
                 //关闭涂鸦
-                Toast.makeText(mContext, "关闭涂鸦", Toast.LENGTH_LONG).show();
-                // 清空图片
+                Toast.makeText(mContext, "关闭画笔", Toast.LENGTH_LONG).show();
+                //清空图片
                 ivImage.setImageBitmap(null);
                 ivImage.setVisibility(View.GONE);
                 draw_view.setVisibility(View.GONE);
+                rlNoCameraDraw.setVisibility(View.GONE);
+                break;
+            case ActionConfigs.ACTION_CALL_CONTROLLER:
+                //远程控制-请求 弹窗
+                RemoteControlWindow.getInstance(mContext).showMatch(null);
+                break;
+            case ActionConfigs.ACTION_CANCEL_CONTROLLER_REQUEST:
+                //远程控制-取消请求
+                RemoteControlWindow.getInstance(mContext).hide(null);
                 break;
             case ActionConfigs.ACTION_OPEN_CONTROLLER:
                 //开启远程控制
@@ -475,7 +527,13 @@ public class CallChatWindow extends BaseFloatingWindow {
         Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         ivImage.setImageBitmap(bitmap);
         ivImage.setVisibility(View.VISIBLE);
-        draw_view.setVisibility(View.VISIBLE);
+        if (isServiceCamera) {
+            draw_view.setVisibility(View.VISIBLE);
+            rlNoCameraDraw.setVisibility(View.GONE);
+        } else {
+            draw_view.setVisibility(View.GONE);
+            rlNoCameraDraw.setVisibility(View.VISIBLE);
+        }
     }
 
     public void showPoint(MouseEventBean mouseEventBean) {

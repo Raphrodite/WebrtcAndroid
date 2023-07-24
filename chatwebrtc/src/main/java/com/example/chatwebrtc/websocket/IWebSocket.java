@@ -73,4 +73,10 @@ public interface IWebSocket {
      * @param ack 应答状态 AGREE同意、REFUSE拒绝
      */
     void sendChangeCallTypeAck(String ack);
+
+    /**
+     * 发送action 涂鸦是否开启 远程控制是否开启
+     * @param action
+     */
+    void sendCustomAction(String action);
 }

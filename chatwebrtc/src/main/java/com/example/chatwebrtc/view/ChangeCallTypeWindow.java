@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.chatwebrtc.R;
-import com.example.chatwebrtc.utils.ChangeCallTypeConfigs;
+import com.example.chatwebrtc.utils.ActionConfigs;
 
 /**
  * * Copyright * 圣通电力
@@ -59,7 +59,7 @@ public class ChangeCallTypeWindow extends BaseFloatingWindow{
             @Override
             public void onClick(View view) {
                 hide(null);
-                CallChatWindow.getInstance(mContext).changeCallTypeResult(ChangeCallTypeConfigs.CHANGE_CALL_TYPE_REFUSE);
+                CallChatWindow.getInstance(mContext).changeCallTypeResult(ActionConfigs.CHANGE_CALL_TYPE_REFUSE);
             }
         });
         //确认 监听
@@ -67,7 +67,7 @@ public class ChangeCallTypeWindow extends BaseFloatingWindow{
             @Override
             public void onClick(View view) {
                 hide(null);
-                CallChatWindow.getInstance(mContext).changeCallTypeResult(ChangeCallTypeConfigs.CHANGE_CALL_TYPE_AGREE);
+                CallChatWindow.getInstance(mContext).changeCallTypeResult(ActionConfigs.CHANGE_CALL_TYPE_AGREE);
             }
         });
     }

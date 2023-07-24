@@ -18,28 +18,28 @@ import com.example.chatwebrtc.utils.ActionConfigs;
  * @Author: Raphrodite
  * @CreateDate: 2023/7/24
  */
-public class RemoteControlWindow extends BaseFloatingWindow{
+public class DrawWindow extends BaseFloatingWindow{
 
-    private static RemoteControlWindow instance;
+    private static DrawWindow instance;
 
     private TextView tvConfirm;
 
     private TextView tvCancel;
 
-    public static RemoteControlWindow getInstance(Context context) {
+    public static DrawWindow getInstance(Context context) {
         if (instance == null) {
-            instance = new RemoteControlWindow(context);
+            instance = new DrawWindow(context);
         }
         return instance;
     }
 
-    public RemoteControlWindow(Context context) {
+    public DrawWindow(Context context) {
         super(context);
     }
 
     @Override
     protected int setLayoutId() {
-        return R.layout.layout_remote_control_window;
+        return R.layout.layout_draw_window;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class RemoteControlWindow extends BaseFloatingWindow{
             @Override
             public void onClick(View v) {
                 hide(null);
-                CallChatWindow.getInstance(mContext).sendCustomAction(ActionConfigs.CANCEL_CONTROLLER);
+                CallChatWindow.getInstance(mContext).sendCustomAction(ActionConfigs.DRAW_CANCEL);
             }
         });
         //确认 监听
@@ -65,7 +65,7 @@ public class RemoteControlWindow extends BaseFloatingWindow{
             @Override
             public void onClick(View v) {
                 hide(null);
-                CallChatWindow.getInstance(mContext).sendCustomAction(ActionConfigs.AGREE_CONTROLLER);
+                CallChatWindow.getInstance(mContext).sendCustomAction(ActionConfigs.DRAW_AGREE);
             }
         });
 
