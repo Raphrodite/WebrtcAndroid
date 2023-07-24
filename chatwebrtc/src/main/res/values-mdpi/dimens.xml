@@ -29,11 +29,16 @@
     <dimen name="dp_80">240px</dimen>
     <dimen name="dp_82">246px</dimen>
     <dimen name="dp_100">300px</dimen>
+    <dimen name="dp_110">330px</dimen>
     <dimen name="dp_120">360px</dimen>
     <dimen name="dp_140">420px</dimen>
     <dimen name="dp_150">450px</dimen>
     <dimen name="dp_180">540px</dimen>
+    <dimen name="dp_220">660px</dimen>
+    <dimen name="dp_280">780px</dimen>
     <dimen name="dp_300">900px</dimen>
+    <dimen name="dp_360">1080px</dimen>
+
     <!--drawablePadding-->
     <dimen name="drawable_padding_5">15px</dimen>
     <dimen name="drawable_padding_8">24px</dimen>
