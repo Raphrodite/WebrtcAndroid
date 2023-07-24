@@ -107,8 +107,8 @@
         <RelativeLayout
             android:visibility="gone"
             android:id="@+id/rl_no_camera_draw"
-            android:layout_width="@dimen/dp_110"
-            android:layout_height="@dimen/dp_100"
+            android:layout_width="@dimen/dp_140"
+            android:layout_height="@dimen/dp_140"
             android:layout_alignParentEnd="true"
             android:background="@color/color_656565"
             >
@@ -144,8 +144,8 @@
         <org.webrtc.SurfaceViewRenderer
             android:visibility="gone"
             android:id="@+id/draw_render"
-            android:layout_width="@dimen/dp_110"
-            android:layout_height="@dimen/dp_100"
+            android:layout_width="@dimen/dp_140"
+            android:layout_height="@dimen/dp_140"
             android:layout_alignParentEnd="true"
             />
 
