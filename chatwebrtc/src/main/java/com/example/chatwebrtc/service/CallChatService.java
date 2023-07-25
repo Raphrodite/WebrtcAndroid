@@ -1,4 +1,4 @@
-package com.example.webrtcandroid;
+package com.example.chatwebrtc.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -19,14 +19,14 @@ import com.example.chatwebrtc.view.RobotWindow;
  * @Author: Raphrodite
  * @CreateDate: 2023/5/24
  */
-public class ChatService extends Service {
+public class CallChatService extends Service {
 
     /**
      * Log TAG
      */
     public final static String TAG = "ChatService_zrzr";
 
-    private ChatService instance;
+    private CallChatService instance;
 
     @Nullable
     @Override

@@ -21,6 +21,9 @@
         <activity
             android:name=".control.AccessibilityOpenHelperActivity"
             />
+
+        <service android:name=".service.CallChatService"/>
+
     </application>
 
 </manifest>

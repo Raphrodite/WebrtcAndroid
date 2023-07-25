@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.chatwebrtc.bean.EventMessage;
+import com.example.chatwebrtc.service.CallChatService;
 import com.example.webrtcandroid.databinding.ActivityMainBinding;
 
 import org.greenrobot.eventbus.EventBus;
@@ -118,8 +119,8 @@ public class MainActivity extends BaseActivity {
 
     private void initChatService() {
         //判断服务是否运行
-        if (!isServiceRunning("com.example.webrtcandroid.ChatService", this)) {
-            startService(new Intent(this, ChatService.class));
+        if (!isServiceRunning("com.example.chatwebrtc.service.CallChatService", this)) {
+            startService(new Intent(this, CallChatService.class));
         }
     }
 
@@ -167,7 +168,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        stopService(new Intent(this, ChatService.class));
+        stopService(new Intent(this, CallChatService.class));
     }
 
     @Override

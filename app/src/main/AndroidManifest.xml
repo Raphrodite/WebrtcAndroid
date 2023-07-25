@@ -42,9 +42,6 @@
 
         <activity android:name=".ThirdActivity" />
 
-        <!--视频通话服务-->
-        <service android:name=".ChatService" />
-
     </application>
 
 </manifest>
