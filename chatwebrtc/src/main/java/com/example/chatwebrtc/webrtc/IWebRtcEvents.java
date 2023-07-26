@@ -61,7 +61,7 @@ public interface IWebRtcEvents {
     void onRemoteIceCandidate(String id, IceCandidate iceCandidate);
 
     /**
-     * web点击接听
+     * web点击接听 选择接入方式
      * @param callType 通话类型：AUDIO 音频、VIDEO 视频
      */
     void onCall(String callType);
@@ -84,12 +84,12 @@ public interface IWebRtcEvents {
     void onChangeCancel();
 
     /**
-     * 自定义消息 摄像头的切换 开启或者关闭涂鸦
+     * 自定义消息
      */
     void onAction(String action);
 
     /**
-     * 涂鸦 发送图片
+     * 画笔 发送图片
      * @param imageStr
      */
     void onSendImage(String imageStr);

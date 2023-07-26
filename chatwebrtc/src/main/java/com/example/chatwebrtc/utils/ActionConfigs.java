@@ -25,17 +25,17 @@ public class ActionConfigs {
     public static final String ACTION_CLOSE_VIDEO = "CLOSE_VIDEO";
 
     /**
-     * 开启涂鸦
+     * 开启画笔
      */
     public static final String ACTION_OPEN_DRAW = "OPEN_DRAW";
 
     /**
-     * 关闭涂鸦
+     * 关闭画笔
      */
     public static final String ACTION_CLOSE_DRAW = "CLOSE_DRAW";
 
     /**
-     * 发送图片
+     * 画笔-发送图片
      */
     public static final String ACTION_SEND_IMAGE = "SEND_IMAGE";
 
@@ -99,12 +99,12 @@ public class ActionConfigs {
     public static final String CHANGE_CALL_TYPE_AGREE = "AGREE";
 
     /**
-     * 涂鸦-取消
+     * 开启画笔-取消
      */
     public static final String DRAW_CANCEL = "CANCEL_DRAW";
 
     /**
-     * 涂鸦-同意
+     * 开启画笔-同意
      */
     public static final String DRAW_AGREE = "AGREE_DRAW";
 

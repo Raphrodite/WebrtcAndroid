@@ -444,7 +444,7 @@ public class PeerConnectionHelper {
     }
 
     /**
-     * 设置自己是否静音
+     * 设置是否静音
      * @param enable
      */
     public void toggleMute(boolean enable) {
