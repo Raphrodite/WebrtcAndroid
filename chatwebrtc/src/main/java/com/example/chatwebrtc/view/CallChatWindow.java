@@ -556,11 +556,12 @@ public class CallChatWindow extends BaseFloatingWindow {
         int dy = mouseEventBean.getStartPoint().getPointY();
 
         if ("CLICK".equals(mouseEventType)) {
-            //点击
+            //点击x
             int x=((dx-startWidth) * screenRealWidth) / (screenwidth-(startWidth*2));
-            //云终端获取状态栏数据不对直接写死1920
-            // int y=dy1 * (screenRealHeight + statusBarHeight) / screenheight;
-            int y=dy * (1920) / screenheight;
+            //点击y
+//             int y= dy * (screenRealHeight + statusBarHeight) / screenheight;
+            int y= dy * (screenRealHeight) / screenheight;
+//            int y=dy * (1920) / screenheight;
 
             AccessibilityOperator.getInstance().dispatchGestureClick(x, y);
         } else if ("DRAG".equals(mouseEventType)) {
